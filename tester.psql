@@ -1,0 +1,37 @@
+
+-- sudo su - 
+-- service postgresql start
+-- su - postgres
+-- psql -a -f tester.psql           -- use this line to run specific file 
+
+
+DROP TABLE IF EXISTS locations;
+DROP DATABASE IF EXISTS coordinates;
+
+CREATE DATABASE coordinates;
+
+CREATE TABLE locations(
+    ID SERIAL PRIMARY KEY,
+    colN NUMERIC(20),  
+    colW NUMERIC(20),  
+    machineName TEXT,
+    coinOne TEXT,
+    coinTwo TEXT,
+    coinThree TEXT
+
+);
+
+INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
+VALUES (33.8121, 117.9190, 'Main Street', 'One', 'Two', 'Three');
+
+INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
+VALUES (33.8101, 117.9185, 'Disney Gallery', 'One', 'Two', 'Three');
+
+
+------------------------------------------------------------------------
+    
+
+SELECT * 
+FROM locations
+
+

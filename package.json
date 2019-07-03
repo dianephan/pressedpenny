@@ -1,11 +1,20 @@
 {
   "name": "pressedpenny",
   "version": "1.0.0",
-  "description": "",
+  "description": "Disney Coin tracker",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": "10.12.0",
+    "npm": "6.4.1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1"
+  }
 }
