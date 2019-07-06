@@ -9,6 +9,8 @@
 -- psql -a -f tester.psql           -- use this line to run specific file 
 
 
+-- run \c to change to heroku database
+
 DROP TABLE IF EXISTS locations;
 -- DROP DATABASE IF EXISTS coordinates;
 
