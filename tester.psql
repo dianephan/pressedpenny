@@ -1,4 +1,8 @@
+-- MAC 
+-- psql coordinates -a -f tester.psql  
 
+
+-- WINDOWS VM
 -- sudo su - 
 -- service postgresql start
 -- su - postgres
@@ -6,14 +10,14 @@
 
 
 DROP TABLE IF EXISTS locations;
-DROP DATABASE IF EXISTS coordinates;
+-- DROP DATABASE IF EXISTS coordinates;
 
-CREATE DATABASE coordinates;
+-- CREATE DATABASE coordinates;
 
 CREATE TABLE locations(
     ID SERIAL PRIMARY KEY,
-    colN NUMERIC(20),  
-    colW NUMERIC(20),  
+    colN DECIMAL(7,4),  
+    colW DECIMAL(7,4),  
     machineName TEXT,
     coinOne TEXT,
     coinTwo TEXT,
@@ -26,6 +30,16 @@ VALUES (33.8121, 117.9190, 'Main Street', 'One', 'Two', 'Three');
 
 INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
 VALUES (33.8101, 117.9185, 'Disney Gallery', 'One', 'Two', 'Three');
+
+INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
+VALUES (33.805578, -117.918721, 'Cars Land', 'One', 'Two', 'Three');
+
+INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
+VALUES (33.810959, -117.921420, 'Club 33', 'One', 'Two', 'Three');
+
+INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
+VALUES (33.811244, -117.920847, 'Pirates of the Caribbean', 'One', 'Two', 'Three');
+
 
 
 ------------------------------------------------------------------------
