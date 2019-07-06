@@ -1,6 +1,6 @@
 // const Joi = require('joi'); 
 const express = require('express'); 
-const mountRoutes = require('./routes');
+const mountRoutes = require('./routes/index');
 const env = require('dotenv').config(); 
 
 const app = express(); 
