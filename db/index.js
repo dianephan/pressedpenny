@@ -1,6 +1,4 @@
 const { Pool, Client } = require('pg')
-// uncomment this to test on local? 
-// const pool = new Pool()
 
 // this const pool is required to access database on heroku
 // also had to delete .env file (local) because it might have overwritten heroku's .env file
@@ -14,7 +12,6 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true,
 });
-
 
 const client = new Client({
   user: 'njolazjolmpfjq',
