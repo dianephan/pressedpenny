@@ -1,4 +1,4 @@
-// run /coin
+// run /coins
 const Router = require('express-promise-router')
 
 const db = require('../db')
@@ -7,16 +7,11 @@ const router = new Router()
 module.exports = router
 
 router.get('/', (req, res) => {
-    res.send('Helo')
+    res.send('View the database of coins here!')
 })
 
 router.get('/all', async (req, res) => {
-    // const id = req.params.id;
-    // console.log(id)
     const { rows } = await db.query('SELECT * FROM locations')
-    // console.log(rows)
-    // res.send
-   
     res.send(rows)
 })
 

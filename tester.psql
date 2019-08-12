@@ -28,19 +28,19 @@ CREATE TABLE locations(
 );
 
 INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
-VALUES (33.8121, 117.9190, 'Main Street', 'One', 'Two', 'Three');
+VALUES (33.812, 117.920, 'Main Street', 'One', 'Two', 'Three');
 
 INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
-VALUES (33.8101, 117.9185, 'Disney Gallery', 'One', 'Two', 'Three');
+VALUES (33.810, 117.919, 'Disney Gallery', 'One', 'Two', 'Three');
 
 INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
-VALUES (33.805578, -117.918721, 'Cars Land', 'One', 'Two', 'Three');
+VALUES (33.806, -117.919, 'Cars Land', 'One', 'Two', 'Three');
 
 INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
-VALUES (33.810959, -117.921420, 'Club 33', 'One', 'Two', 'Three');
+VALUES (33.811, -117.921, 'Club 33', 'One', 'Two', 'Three');
 
 INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
-VALUES (33.811244, -117.920847, 'Pirates of the Caribbean', 'One', 'Two', 'Three');
+VALUES (33.811, -117.923, 'Pirates of the Caribbean', 'One', 'Two', 'Three');
 
 
 
