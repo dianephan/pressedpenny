@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
 })
 
 router.get('/all', async (req, res) => {
-    const { rows } = await db.query('SELECT * FROM locations')
+    const { rows } = await db.query("SELECT * FROM locations")
     res.send(rows)
 })
 

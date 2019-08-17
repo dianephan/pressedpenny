@@ -14,6 +14,13 @@ const path = require('path');           //this helps the google maps api show up
 // for the css folder 
 // app.use(express.static('../library'))
 
+const users = []
+
+app.get('users', (req, res) => {
+    res.json(users)
+
+})
+
 app.get('/', function(req, res){
     res.sendFile(path.join(__dirname + '/map.html'));
 });

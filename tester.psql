@@ -12,28 +12,26 @@
 -- run \c to change to heroku database
 
 DROP TABLE IF EXISTS locations;
--- DROP DATABASE IF EXISTS coordinates;
-
--- CREATE DATABASE coordinates;
 
 CREATE TABLE locations(
     ID SERIAL PRIMARY KEY,
-    colN DECIMAL(7,4),  
-    colW DECIMAL(7,4),  
+    colN DECIMAL(7,3),  
+    colW DECIMAL(7,3),  
     machineName TEXT,
     coinOne TEXT,
     coinTwo TEXT,
     coinThree TEXT
-
 );
 
+
+-- 3 machinwes here 
 INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
-VALUES (33.812, 117.920, 'Main Street', 'One', 'Two', 'Three');
+VALUES (33.811, -117.919, 'Penny Arcade', 'One', 'Two', 'Three');
 
 INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
-VALUES (33.810, 117.919, 'Disney Gallery', 'One', 'Two', 'Three');
+VALUES (33.810, -117.919, 'Disney Gallery', 'One', 'Two', 'Three');
 
-INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
+INSERT INTO locations (colN, colW, machin   eName, coinOne, coinTwo, coinThree) 
 VALUES (33.806, -117.919, 'Cars Land', 'One', 'Two', 'Three');
 
 INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
@@ -42,6 +40,11 @@ VALUES (33.811, -117.921, 'Club 33', 'One', 'Two', 'Three');
 INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
 VALUES (33.811, -117.923, 'Pirates of the Caribbean', 'One', 'Two', 'Three');
 
+INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
+VALUES (33.814, -117.918, 'Small World Toy Shop', 'One', 'Two', 'Three');
+
+INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
+VALUES (33.815, -117.918, 'Toontown Gag Factory', 'One', 'Two', 'Three');
 
 
 ------------------------------------------------------------------------

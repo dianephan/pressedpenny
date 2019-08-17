@@ -17,7 +17,7 @@
     </style>
   </head>
   <body>
-    <h3>GOOGLE MAPS API!!</h3>
+    <h3>Disney Coin Map</h3>
     
     <!--The div element for the map -->
     <div id="map"></div>
@@ -36,23 +36,51 @@ async function initData() {
 // getting data from my own API (initData()) to build map 
 async function initMap(data) {
   var data = await initData();
-  console.log(data);
+  console.log(data)
+  console.log('the length of array is : ' + data.length);
 
   var dland = {lat: 33.812, lng: -117.918};
   var hypsmtn = {lat: 33.811, lng: -117.918};
   
   // The map, centered at dland
-  var map = new google.maps.Map(
-      document.getElementById('map'), {zoom: 17, center: dland});
+  var map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 17, center: dland
+  });
 
   // iterate through to pinpoint markers
   for (i in data) {
+    // location of new marker 
     const currentMarker = {lat: parseFloat(data[i].coln), lng: parseFloat(data[i].colw)};
     console.log(currentMarker);
-    var marker2 = new google.maps.Marker({position: currentMarker, map: map});
+    const marker2 = new google.maps.Marker({position: currentMarker, map: map});
+
+    const name = data[i].machinename;
+
+    // document.getElementById("mytext").innerHTML = test;//Now you get the js variable inside your form element
+
+    const contentString2 = '<div id="content">'+
+            '<div id="siteNotice">'+
+            '</div>'+
+            '<h1 id="firstHeading" class="firstHeading">' + name +'</h1>'+
+            '<div id="bodyContent">'+
+            '<p>' + 'description here' +
+            '</p>' +
+            '</div>' +
+            '</div>';
+
+    console.log("we are on element : " + i + " with " + name);
+
+    const infowindow = new google.maps.InfoWindow({
+      content: contentString2,
+      maxWidth: 200
+    });
+
+    marker2.addListener('click', () => {
+      infowindow.open(map, marker2);
+    });
+
   }
 
-  var marker = new google.maps.Marker({position: dland, map: map});
 
 }
 
