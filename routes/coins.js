@@ -22,8 +22,3 @@ router.get('/:id', async (req, res) => {
     // console.log(rows)
     res.send(rows[0])
 })
-
-
-
-
-

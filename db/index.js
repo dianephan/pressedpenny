@@ -25,7 +25,7 @@ const { Pool, Client } = require('pg')
 const pool = new Pool({
   user: '',
   host: 'localhost',
-  database: 'coordinates',
+  database: 'pennydb',
   password: '',
   port: 5432,
   connectionString: '',
@@ -34,7 +34,7 @@ const pool = new Pool({
 const client = new Client({
   user: '',
   host: 'localhost',
-  database: 'coordinates',
+  database: 'pennydb',
   password: '',
   port: 5432,
   connectionString: '',

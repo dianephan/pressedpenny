@@ -1,6 +1,5 @@
 -- MAC 
--- psql coordinates -a -f tester.psql  
-
+-- psql pennydb -a -f tester.psql  
 
 -- WINDOWS VM
 -- sudo su - 
@@ -12,6 +11,18 @@
 -- run \c to change to heroku database
 
 DROP TABLE IF EXISTS locations;
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users(
+    ID SERIAL PRIMARY KEY,
+    userID TEXT,
+    pass TEXT
+);
+
+INSERT INTO users (userID, pass) 
+VALUES ('diane', 'p0ma');
+
+------------------------------------------------------------------------
 
 CREATE TABLE locations(
     ID SERIAL PRIMARY KEY,
@@ -20,11 +31,12 @@ CREATE TABLE locations(
     machineName TEXT,
     coinOne TEXT,
     coinTwo TEXT,
-    coinThree TEXT
+    coinThree TEXT,
+    userID TEXT
 );
 
 
--- 3 machinwes here 
+-- 3 machines here 
 INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
 VALUES (33.811, -117.919, 'Penny Arcade', 'One', 'Two', 'Three');
 
@@ -48,9 +60,10 @@ VALUES (33.815, -117.918, 'Toontown Gag Factory', 'One', 'Two', 'Three');
 
 
 ------------------------------------------------------------------------
-    
 
 SELECT * 
-FROM locations
+FROM locations;
 
+SELECT * 
+FROM users;
 
