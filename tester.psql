@@ -41,6 +41,11 @@ CREATE OR REPLACE FUNCTION insert_user(username TEXT, mail TEXT, pw TEXT) RETURN
 
 SELECT insert_user('diane', 'dianephan12@gmail.com', 'p0ma');
 SELECT insert_user('chandler', 'chan4est@gmail.com', 'lavitar');
+    pass TEXT
+);
+
+INSERT INTO users (userID, pass) 
+VALUES ('diane', 'p0ma');
 
 ------------------------------------------------------------------------
 
@@ -50,6 +55,10 @@ CREATE TABLE locations(
     colW DECIMAL(7,3),  
     machineName TEXT,
     coinName TEXT
+    coinOne TEXT,
+    coinTwo TEXT,
+    coinThree TEXT,
+    userID TEXT
 );
 
 -- DROP PROCEDURE insert_coin(long DECIMAL(7,6), lat DECIMAL(7,6), mname TEXT, coin TEXT);
@@ -96,6 +105,8 @@ SELECT(insert_coin(33.815, -117.918, 'Toontown Gag Factory', 'Baby Mickey and Pl
 SELECT(insert_coin(33.815, -117.918, 'Toontown Gag Factory', 'Baby Minnie Mouse'));
 
 
+SELECT * 
+FROM users;
 
 ------------------------------------------------------------------------
 

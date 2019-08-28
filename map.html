@@ -1,0 +1,98 @@
+<!-- app.js calls this homepage! 
+  - make get req in my own API
+  - need to make HTTP call to my own server 
+-->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      /* Set the size of the div element that contains the map */
+      #map {
+        /* 400px by 100% */
+        /* change to fullscreen: 1600px by 1200% when done */
+        
+        height: 800px;  /* The height is 400 pixels */
+        width: 1500px;  /* The width is the width of the web page */
+        
+       }
+    </style>
+  </head>
+  <body>
+    <h3>Disney Coin Map</h3>
+    
+    <!--The div element for the map -->
+    <div id="map"></div>
+
+    <script>
+
+// fetch func = asynchronous so that all my data is retrieved and completed before initializing map
+// json is data type to hold bunch of key values 
+async function initData() {
+    const response = await fetch('http://localhost:3000/coins/all');
+    const json = response.json();
+    console.log(json);
+    return json;
+}
+
+// getting data from my own API (initData()) to build map 
+async function initMap(data) {
+  var data = await initData();
+  console.log(data)
+  console.log('the length of array is : ' + data.length);
+
+  var dland = {lat: 33.812, lng: -117.918};
+  var hypsmtn = {lat: 33.811, lng: -117.918};
+  
+  // The map, centered at dland
+  var map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 17, center: dland
+  });
+
+  // iterate through to pinpoint markers
+  for (i in data) {
+    // location of new marker 
+    const currentMarker = {lat: parseFloat(data[i].coln), lng: parseFloat(data[i].colw)};
+    console.log(currentMarker);
+    const marker2 = new google.maps.Marker({position: currentMarker, map: map});
+
+    const name = data[i].machinename;
+
+    // document.getElementById("mytext").innerHTML = test;//Now you get the js variable inside your form element
+
+    const contentString2 = '<div id="content">'+
+            '<div id="siteNotice">'+
+            '</div>'+
+            '<h1 id="firstHeading" class="firstHeading">' + name +'</h1>'+
+            '<div id="bodyContent">'+
+            '<p>' + 'description here' +
+            '</p>' +
+            '</div>' +
+            '</div>';
+
+    console.log("we are on element : " + i + " with " + name);
+
+    const infowindow = new google.maps.InfoWindow({
+      content: contentString2,
+      maxWidth: 200
+    });
+
+    marker2.addListener('click', () => {
+      infowindow.open(map, marker2);
+    });
+
+  }
+
+
+}
+
+
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBt2uGZOui5nESr2PwoRVJxP2OUqYA-gp8&callback=initMap">
+    </script>
+
+  </body>
+</html>
+
+
