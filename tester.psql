@@ -1,6 +1,5 @@
 -- MAC 
--- psql coordinates -a -f tester.psql  
-
+-- psql pennydb -a -f tester.psql  
 
 -- WINDOWS VM
 -- sudo su - 
@@ -8,49 +7,98 @@
 -- su - postgres
 -- psql -a -f tester.psql           -- use this line to run specific file 
 
-
 -- run \c to change to heroku database
 
 DROP TABLE IF EXISTS locations;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS collections;
+
+------------------------------------------------------------------------
+
+CREATE TABLE collections(
+    ID SERIAL PRIMARY KEY
+);
+
+------------------------------------------------------------------------
+
+CREATE TABLE users(
+    ID SERIAL PRIMARY KEY,
+    userID TEXT,
+    email TEXT,
+    pass TEXT,
+    collectionID int,
+    FOREIGN KEY (collectionID) REFERENCES collections(ID)
+);
+
+CREATE OR REPLACE FUNCTION insert_user(username TEXT, mail TEXT, pw TEXT) RETURNS void AS
+    $$
+    DECLARE collectionID_ INT;
+    BEGIN
+        INSERT INTO collections values(default) RETURNING id INTO collectionID_;
+        INSERT INTO users (userID, email, pass, collectionID) VALUES (username, mail, pw, collectionID_);
+    END;
+    $$ LANGUAGE PLPGSQL;
+
+SELECT insert_user('diane', 'dianephan12@gmail.com', 'p0ma');
+SELECT insert_user('chandler', 'chan4est@gmail.com', 'lavitar');
+
+------------------------------------------------------------------------
 
 CREATE TABLE locations(
     ID SERIAL PRIMARY KEY,
     colN DECIMAL(7,3),  
     colW DECIMAL(7,3),  
     machineName TEXT,
-    coinOne TEXT,
-    coinTwo TEXT,
-    coinThree TEXT
+    coinName TEXT
 );
 
+-- DROP PROCEDURE insert_coin(long DECIMAL(7,6), lat DECIMAL(7,6), mname TEXT, coin TEXT);
 
--- 3 machinwes here 
-INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
-VALUES (33.811, -117.919, 'Penny Arcade', 'One', 'Two', 'Three');
+CREATE OR REPLACE FUNCTION insert_coin(long DECIMAL(7,3), lat DECIMAL(7,3), mname TEXT, coin TEXT) RETURNS void AS
+    $$
+    BEGIN
+        INSERT INTO locations (colN, colW, machineName, coinName) VALUES (long, lat, mname, coin);
+        ALTAR TABLE collections ADD one TEXT;
+    END;
+$$ LANGUAGE PLPGSQL;
 
-INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
-VALUES (33.810, -117.919, 'Disney Gallery', 'One', 'Two', 'Three');
+--  -- 3 machines here 
+SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #1', 'Peter Pan, Walts "Leave Today…"'));
+SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #1', 'Mickey, Walts "Do the Impossible" Castle'));
+SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #1', 'Walts "If you can dream it."'));
 
-INSERT INTO locations (colN, colW, machin   eName, coinOne, coinTwo, coinThree) 
-VALUES (33.806, -117.919, 'Cars Land', 'One', 'Two', 'Three');
+SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #2', 'Mary Poppins full portrait'));
+SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #2', 'Mary Poppins Flying'));
+SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #2', 'Mary Poppins with penguins'));
 
-INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
-VALUES (33.811, -117.921, 'Club 33', 'One', 'Two', 'Three');
+SELECT(insert_coin(33.810302, -117.918539, 'Opera House Exit #1', 'FANTASY LAND, Tinker Bell'));
+SELECT(insert_coin(33.810302, -117.918539, 'Opera House Exit #1', 'TOONTOWN, Mickey '));
+SELECT(insert_coin(33.810302, -117.918539, 'Opera House Exit #1', 'ADVENTURE LAND Donald'));
 
-INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
-VALUES (33.811, -117.923, 'Pirates of the Caribbean', 'One', 'Two', 'Three');
+SELECT(insert_coin(33.810302, -117.918540, 'Opera House Exit #2', 'Pirate Goofy'));
+SELECT(insert_coin(33.810302, -117.918540, 'Opera House Exit #2', 'Mickey Frontierland'));
+SELECT(insert_coin(33.810302, -117.918540, 'Opera House Exit #2', 'Pluto Tomorrowland'));
 
-INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
-VALUES (33.814, -117.918, 'Small World Toy Shop', 'One', 'Two', 'Three');
+SELECT(insert_coin(33.810302, -117.918541, 'Opera House Exit #3', 'Main Street USA'));
+SELECT(insert_coin(33.810302, -117.918541, 'Opera House Exit #3', 'Let The Memories Begin'));
+SELECT(insert_coin(33.810302, -117.918541, 'Opera House Exit #3', 'Fox Critter Country'));
 
-INSERT INTO locations (colN, colW, machineName, coinOne, coinTwo, coinThree) 
-VALUES (33.815, -117.918, 'Toontown Gag Factory', 'One', 'Two', 'Three');
+SELECT(insert_coin(33.812590, -117.919415, 'Fantasy Faire', 'Frozens Kristoff, Sven, & Olaf'));
+SELECT(insert_coin(33.812590, -117.919415, 'Fantasy Faire', 'Frozens Elsa and Anna'));
+SELECT(insert_coin(33.812590, -117.919415, 'Fantasy Faire', 'Frozens Olaf'));
+
+SELECT(insert_coin(33.814430, -117.918100, 'Small World Toy Shop', 'Small World Attraction'));
+SELECT(insert_coin(33.814430, -117.918100, 'Small World Toy Shop', 'Small World Clock Happy Face'));
+SELECT(insert_coin(33.814430, -117.918100, 'Small World Toy Shop', 'Small World Dolls'));
+
+SELECT(insert_coin(33.815, -117.918, 'Toontown Gag Factory', 'Baby Goofy'));
+SELECT(insert_coin(33.815, -117.918, 'Toontown Gag Factory', 'Baby Mickey and Pluto'));
+SELECT(insert_coin(33.815, -117.918, 'Toontown Gag Factory', 'Baby Minnie Mouse'));
+
 
 
 ------------------------------------------------------------------------
-    
 
-SELECT * 
-FROM locations
-
-
+SELECT * FROM collections;
+SELECT * FROM locations;
+SELECT * FROM users;

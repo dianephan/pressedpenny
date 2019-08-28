@@ -1,4 +1,7 @@
-const { Pool, Client } = require('pg')
+const {
+  Pool,
+  Client
+} = require('pg')
 
 // this const pool is required to access database on heroku
 // also had to delete .env file (local) because it might have overwritten heroku's .env file
@@ -25,7 +28,7 @@ const { Pool, Client } = require('pg')
 const pool = new Pool({
   user: '',
   host: 'localhost',
-  database: 'coordinates',
+  database: 'pennydb',
   password: '',
   port: 5432,
   connectionString: '',
@@ -34,7 +37,7 @@ const pool = new Pool({
 const client = new Client({
   user: '',
   host: 'localhost',
-  database: 'coordinates',
+  database: 'pennydb',
   password: '',
   port: 5432,
   connectionString: '',
