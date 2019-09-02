@@ -44,9 +44,6 @@ SELECT insert_user('chandler', 'chan4est@gmail.com', 'lavitar');
     pass TEXT
 );
 
-INSERT INTO users (userID, pass) 
-VALUES ('diane', 'p0ma');
-
 ------------------------------------------------------------------------
 
 CREATE TABLE locations(
@@ -54,10 +51,7 @@ CREATE TABLE locations(
     colN DECIMAL(7,3),  
     colW DECIMAL(7,3),  
     machineName TEXT,
-    coinName TEXT
-    coinOne TEXT,
-    coinTwo TEXT,
-    coinThree TEXT,
+    coinName TEXT,
     userID TEXT
 );
 

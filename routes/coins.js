@@ -19,8 +19,5 @@ router.get('/:id', async (req, res) => {
     // console.log(rows)
     res.send(rows[0])
 })
-<<<<<<< HEAD:routes/coins.js
 
 module.exports = router
-=======
->>>>>>> ef2891ac45a3eed91016771fb3bc4a6c66848fe6:routes/coins.js
