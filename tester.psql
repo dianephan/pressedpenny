@@ -15,8 +15,14 @@ DROP TABLE IF EXISTS collections;
 
 ------------------------------------------------------------------------
 
+-- primary keys must be definitely unique 
+
+
 CREATE TABLE collections(
-    ID SERIAL PRIMARY KEY
+    ID SERIAL PRIMARY KEY,
+    machineName int,
+    FOREIGN KEY (machineName) REFERENCES locations(ID)
+
 );
 
 ------------------------------------------------------------------------
@@ -52,7 +58,6 @@ CREATE TABLE locations(
     colW DECIMAL(7,3),  
     machineName TEXT,
     coinName TEXT,
-    userID TEXT
 );
 
 -- DROP PROCEDURE insert_coin(long DECIMAL(7,6), lat DECIMAL(7,6), mname TEXT, coin TEXT);
