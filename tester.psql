@@ -6,33 +6,55 @@
 -- service postgresql start
 -- su - postgres
 -- psql -a -f tester.psql           -- use this line to run specific file 
+-- when you're in "postgres@diane" type "psql"
 
 -- run \c to change to heroku database
 
-DROP TABLE IF EXISTS locations;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS collections;
+
+DROP TABLE IF EXISTS locations cascade;
+DROP TABLE IF EXISTS users cascade;
+DROP TABLE IF EXISTS collections cascade;
 
 ------------------------------------------------------------------------
 
 -- primary keys must be definitely unique 
 
 
-CREATE TABLE collections(
-    ID SERIAL PRIMARY KEY,
-    machineName int,
-    FOREIGN KEY (machineName) REFERENCES locations(ID)
 
+CREATE TABLE locations(
+    ID SERIAL PRIMARY KEY,
+    colN DECIMAL(7,3),  
+    colW DECIMAL(7,3),  
+    machineName TEXT,
 );
 
-------------------------------------------------------------------------
+CREATE TABLE collections(
+    ID SERIAL PRIMARY KEY,
+    FOREIGN KEY (Y19) REFERENCES year19(ID)
+    FOREIGN KEY (Y20) REFERENCES year20(ID)    
+    --FOREIGN KEY (coinName) REFERENCES coins(ID)
+);
+
+CREATE TABLE year19(
+    ID SERIAL PRIMARY KEY,
+    pennyName TEXT,
+    FOREIGN KEY (machineName) REFERENCES locations(ID)    --every penny belongs to a machine
+)
+
+CREATE TABLE year20(
+    ID SERIAL PRIMARY KEY,
+    pennyName TEXT,
+    FOREIGN KEY (machineName) REFERENCES locations(ID)    --every penny belongs to a machine
+)
+
+
 
 CREATE TABLE users(
     ID SERIAL PRIMARY KEY,
     userID TEXT,
     email TEXT,
     pass TEXT,
-    collectionID int,
+    collectionID INT,
     FOREIGN KEY (collectionID) REFERENCES collections(ID)
 );
 
@@ -47,18 +69,10 @@ CREATE OR REPLACE FUNCTION insert_user(username TEXT, mail TEXT, pw TEXT) RETURN
 
 SELECT insert_user('diane', 'dianephan12@gmail.com', 'p0ma');
 SELECT insert_user('chandler', 'chan4est@gmail.com', 'lavitar');
-    pass TEXT
 );
 
 ------------------------------------------------------------------------
 
-CREATE TABLE locations(
-    ID SERIAL PRIMARY KEY,
-    colN DECIMAL(7,3),  
-    colW DECIMAL(7,3),  
-    machineName TEXT,
-    coinName TEXT,
-);
 
 -- DROP PROCEDURE insert_coin(long DECIMAL(7,6), lat DECIMAL(7,6), mname TEXT, coin TEXT);
 
@@ -66,11 +80,12 @@ CREATE OR REPLACE FUNCTION insert_coin(long DECIMAL(7,3), lat DECIMAL(7,3), mnam
     $$
     BEGIN
         INSERT INTO locations (colN, colW, machineName, coinName) VALUES (long, lat, mname, coin);
-        ALTAR TABLE collections ADD one TEXT;
+--        ALTER TABLE collections ADD TEXT;
+--        ALTER TABLE collections ADD one TEXT;
     END;
 $$ LANGUAGE PLPGSQL;
 
---  -- 3 machines here 
+-- 3 machines here 
 SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #1', 'Peter Pan, Walts "Leave Today…"'));
 SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #1', 'Mickey, Walts "Do the Impossible" Castle'));
 SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #1', 'Walts "If you can dream it."'));
@@ -109,6 +124,9 @@ FROM users;
 
 ------------------------------------------------------------------------
 
+
 SELECT * FROM collections;
 SELECT * FROM locations;
 SELECT * FROM users;
+
+
