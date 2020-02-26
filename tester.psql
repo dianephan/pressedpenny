@@ -20,6 +20,19 @@ DROP TABLE IF EXISTS collections cascade;
 -- primary keys must be definitely unique 
 
 
+                                        -- COLLECTIONS VISUAL: 
+-----------------------------------------------------------------------------------------------------------
+--  |       |                Year 2019                        |                Year 2020
+--  |------------------------------------------------------------------------------------------------------
+--  | ID1   |       MachineName1     |       MachineName2     |
+--  |       | Coin1 | Coin2 | Coin 3 | Coin1 | Coin2 | Coin 3 |
+--  |       |   1   |   0   |    1   |   0   |   1   |    0   |
+--  |------------------------------------------------------------------------------------------------------
+--  | ID2   |       MachineName1     |       MachineName2     |
+--  |       | Coin1 | Coin2 | Coin 3 | Coin1 | Coin2 | Coin 3 |
+--  |       |   X   |       |    x   |       |       |        |
+-----------------------------------------------------------------------------------------------------------
+
 
 CREATE TABLE locations(
     ID SERIAL PRIMARY KEY,
@@ -32,22 +45,21 @@ CREATE TABLE collections(
     ID SERIAL PRIMARY KEY,
     FOREIGN KEY (Y19) REFERENCES year19(ID)
     FOREIGN KEY (Y20) REFERENCES year20(ID)    
-    --FOREIGN KEY (coinName) REFERENCES coins(ID)
 );
 
 CREATE TABLE year19(
     ID SERIAL PRIMARY KEY,
-    pennyName TEXT,
+    coinName TEXT,
+    marker INT, 
     FOREIGN KEY (machineName) REFERENCES locations(ID)    --every penny belongs to a machine
 )
 
 CREATE TABLE year20(
     ID SERIAL PRIMARY KEY,
-    pennyName TEXT,
+    coinName TEXT,
+    marker INT,
     FOREIGN KEY (machineName) REFERENCES locations(ID)    --every penny belongs to a machine
 )
-
-
 
 CREATE TABLE users(
     ID SERIAL PRIMARY KEY,
@@ -58,6 +70,7 @@ CREATE TABLE users(
     FOREIGN KEY (collectionID) REFERENCES collections(ID)
 );
 
+-- adding to table USERS
 CREATE OR REPLACE FUNCTION insert_user(username TEXT, mail TEXT, pw TEXT) RETURNS void AS
     $$
     DECLARE collectionID_ INT;
@@ -71,18 +84,19 @@ SELECT insert_user('diane', 'dianephan12@gmail.com', 'p0ma');
 SELECT insert_user('chandler', 'chan4est@gmail.com', 'lavitar');
 );
 
-------------------------------------------------------------------------
-
-
+-- adding to table LOCATIONS 
 -- DROP PROCEDURE insert_coin(long DECIMAL(7,6), lat DECIMAL(7,6), mname TEXT, coin TEXT);
-
-CREATE OR REPLACE FUNCTION insert_coin(long DECIMAL(7,3), lat DECIMAL(7,3), mname TEXT, coin TEXT) RETURNS void AS
+CREATE OR REPLACE FUNCTION insert_coin(long DECIMAL(7,3), lat DECIMAL(7,3), mname TEXT) RETURNS void AS
     $$
     BEGIN
-        INSERT INTO locations (colN, colW, machineName, coinName) VALUES (long, lat, mname, coin);
+        INSERT INTO locations (colN, colW, machineName, coinName) VALUES (long, lat, mname);
 --        ALTER TABLE collections ADD TEXT;
 --        ALTER TABLE collections ADD one TEXT;
     END;
+
+
+
+
 $$ LANGUAGE PLPGSQL;
 
 -- 3 machines here 
