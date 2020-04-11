@@ -42,35 +42,45 @@ CREATE TABLE locations(
 );
 
 CREATE TABLE collections(
-    ID SERIAL PRIMARY KEY,
-    FOREIGN KEY (Y19) REFERENCES year19(ID)
-    FOREIGN KEY (Y20) REFERENCES year20(ID)    
+    ID int NOT NULL,
+    PRIMARY KEY (ID),
+    FOREIGN KEY (Y19) REFERENCES year19(ID) ON UPDATE CASCADE, 
+    FOREIGN KEY (Y20) REFERENCES year20(ID) ON UPDATE CASCADE    
 );
 
 CREATE TABLE year19(
     ID SERIAL PRIMARY KEY,
     coinName TEXT,
-    marker INT, 
-    FOREIGN KEY (machineName) REFERENCES locations(ID)    --every penny belongs to a machine
+    -- marker INT, 
+    FOREIGN KEY (machineName) REFERENCES locations(ID)    
+    --every penny belongs to a machine
 )
 
 CREATE TABLE year20(
     ID SERIAL PRIMARY KEY,
     coinName TEXT,
     marker INT,
-    FOREIGN KEY (machineName) REFERENCES locations(ID)    --every penny belongs to a machine
+    FOREIGN KEY (machineName) REFERENCES locations(ID)    
+    --every penny belongs to a machine
 )
 
 CREATE TABLE users(
-    ID SERIAL PRIMARY KEY,
+    ID SERIAL,
     userID TEXT,
     email TEXT,
     pass TEXT,
     collectionID INT,
-    FOREIGN KEY (collectionID) REFERENCES collections(ID)
+    PRIMARY KEY (ID),
+    -- FOREIGN KEY (collectionID) REFERENCES collections(ID)
 );
 
 -- adding to table USERS
+INSERT INTO users (id, username) VALUES ('diane');
+
+-- SELECT insert_user('diane', 'dianephan12@gmail.com', 'p0ma');
+-- SELECT insert_user('chandler', 'chan4est@gmail.com', 'lavitar');
+
+
 CREATE OR REPLACE FUNCTION insert_user(username TEXT, mail TEXT, pw TEXT) RETURNS void AS
     $$
     DECLARE collectionID_ INT;
@@ -86,61 +96,60 @@ SELECT insert_user('chandler', 'chan4est@gmail.com', 'lavitar');
 
 -- adding to table LOCATIONS 
 -- DROP PROCEDURE insert_coin(long DECIMAL(7,6), lat DECIMAL(7,6), mname TEXT, coin TEXT);
-CREATE OR REPLACE FUNCTION insert_coin(long DECIMAL(7,3), lat DECIMAL(7,3), mname TEXT) RETURNS void AS
-    $$
-    BEGIN
-        INSERT INTO locations (colN, colW, machineName, coinName) VALUES (long, lat, mname);
---        ALTER TABLE collections ADD TEXT;
---        ALTER TABLE collections ADD one TEXT;
-    END;
+-- CREATE OR REPLACE FUNCTION insert_coin(long DECIMAL(7,3), lat DECIMAL(7,3), mname TEXT) RETURNS void AS
+--     $$
+--     BEGIN
+--         INSERT INTO locations (colN, colW, machineName, coinName) VALUES (long, lat, mname);
+-- --        ALTER TABLE collections ADD TEXT;
+-- --        ALTER TABLE collections ADD one TEXT;
+--     END;
+
+-- $$ LANGUAGE PLPGSQL;
 
 
 
+-- -- 3 machines here 
+-- SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #1', 'Peter Pan, Walts "Leave Today…"'));
+-- SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #1', 'Mickey, Walts "Do the Impossible" Castle'));
+-- SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #1', 'Walts "If you can dream it."'));
 
-$$ LANGUAGE PLPGSQL;
+-- SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #2', 'Mary Poppins full portrait'));
+-- SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #2', 'Mary Poppins Flying'));
+-- SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #2', 'Mary Poppins with penguins'));
 
--- 3 machines here 
-SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #1', 'Peter Pan, Walts "Leave Today…"'));
-SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #1', 'Mickey, Walts "Do the Impossible" Castle'));
-SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #1', 'Walts "If you can dream it."'));
+-- SELECT(insert_coin(33.810302, -117.918539, 'Opera House Exit #1', 'FANTASY LAND, Tinker Bell'));
+-- SELECT(insert_coin(33.810302, -117.918539, 'Opera House Exit #1', 'TOONTOWN, Mickey '));
+-- SELECT(insert_coin(33.810302, -117.918539, 'Opera House Exit #1', 'ADVENTURE LAND Donald'));
 
-SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #2', 'Mary Poppins full portrait'));
-SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #2', 'Mary Poppins Flying'));
-SELECT(insert_coin(33.811259, -117.919210, 'Penny Arcade #2', 'Mary Poppins with penguins'));
+-- SELECT(insert_coin(33.810302, -117.918540, 'Opera House Exit #2', 'Pirate Goofy'));
+-- SELECT(insert_coin(33.810302, -117.918540, 'Opera House Exit #2', 'Mickey Frontierland'));
+-- SELECT(insert_coin(33.810302, -117.918540, 'Opera House Exit #2', 'Pluto Tomorrowland'));
 
-SELECT(insert_coin(33.810302, -117.918539, 'Opera House Exit #1', 'FANTASY LAND, Tinker Bell'));
-SELECT(insert_coin(33.810302, -117.918539, 'Opera House Exit #1', 'TOONTOWN, Mickey '));
-SELECT(insert_coin(33.810302, -117.918539, 'Opera House Exit #1', 'ADVENTURE LAND Donald'));
+-- SELECT(insert_coin(33.810302, -117.918541, 'Opera House Exit #3', 'Main Street USA'));
+-- SELECT(insert_coin(33.810302, -117.918541, 'Opera House Exit #3', 'Let The Memories Begin'));
+-- SELECT(insert_coin(33.810302, -117.918541, 'Opera House Exit #3', 'Fox Critter Country'));
 
-SELECT(insert_coin(33.810302, -117.918540, 'Opera House Exit #2', 'Pirate Goofy'));
-SELECT(insert_coin(33.810302, -117.918540, 'Opera House Exit #2', 'Mickey Frontierland'));
-SELECT(insert_coin(33.810302, -117.918540, 'Opera House Exit #2', 'Pluto Tomorrowland'));
+-- SELECT(insert_coin(33.812590, -117.919415, 'Fantasy Faire', 'Frozens Kristoff, Sven, & Olaf'));
+-- SELECT(insert_coin(33.812590, -117.919415, 'Fantasy Faire', 'Frozens Elsa and Anna'));
+-- SELECT(insert_coin(33.812590, -117.919415, 'Fantasy Faire', 'Frozens Olaf'));
 
-SELECT(insert_coin(33.810302, -117.918541, 'Opera House Exit #3', 'Main Street USA'));
-SELECT(insert_coin(33.810302, -117.918541, 'Opera House Exit #3', 'Let The Memories Begin'));
-SELECT(insert_coin(33.810302, -117.918541, 'Opera House Exit #3', 'Fox Critter Country'));
+-- SELECT(insert_coin(33.814430, -117.918100, 'Small World Toy Shop', 'Small World Attraction'));
+-- SELECT(insert_coin(33.814430, -117.918100, 'Small World Toy Shop', 'Small World Clock Happy Face'));
+-- SELECT(insert_coin(33.814430, -117.918100, 'Small World Toy Shop', 'Small World Dolls'));
 
-SELECT(insert_coin(33.812590, -117.919415, 'Fantasy Faire', 'Frozens Kristoff, Sven, & Olaf'));
-SELECT(insert_coin(33.812590, -117.919415, 'Fantasy Faire', 'Frozens Elsa and Anna'));
-SELECT(insert_coin(33.812590, -117.919415, 'Fantasy Faire', 'Frozens Olaf'));
-
-SELECT(insert_coin(33.814430, -117.918100, 'Small World Toy Shop', 'Small World Attraction'));
-SELECT(insert_coin(33.814430, -117.918100, 'Small World Toy Shop', 'Small World Clock Happy Face'));
-SELECT(insert_coin(33.814430, -117.918100, 'Small World Toy Shop', 'Small World Dolls'));
-
-SELECT(insert_coin(33.815, -117.918, 'Toontown Gag Factory', 'Baby Goofy'));
-SELECT(insert_coin(33.815, -117.918, 'Toontown Gag Factory', 'Baby Mickey and Pluto'));
-SELECT(insert_coin(33.815, -117.918, 'Toontown Gag Factory', 'Baby Minnie Mouse'));
+-- SELECT(insert_coin(33.815, -117.918, 'Toontown Gag Factory', 'Baby Goofy'));
+-- SELECT(insert_coin(33.815, -117.918, 'Toontown Gag Factory', 'Baby Mickey and Pluto'));
+-- SELECT(insert_coin(33.815, -117.918, 'Toontown Gag Factory', 'Baby Minnie Mouse'));
 
 
-SELECT * 
-FROM users;
+-- SELECT * 
+-- FROM users;
 
 ------------------------------------------------------------------------
 
 
-SELECT * FROM collections;
-SELECT * FROM locations;
+-- SELECT * FROM collections;
+-- SELECT * FROM locations;
 SELECT * FROM users;
 
 

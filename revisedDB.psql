@@ -1,0 +1,102 @@
+-- primary keys must be definitely unique 
+                                        -- COLLECTIONS VISUAL: 
+-----------------------------------------------------------------------------------------------------------
+--  |       |                Year 2019                        |                Year 2020
+--  |------------------------------------------------------------------------------------------------------
+--  | ID1   |       MachineName1     |       MachineName2     |
+--  | diane | Coin1 | Coin2 | Coin 3 | Coin1 | Coin2 | Coin 3 |
+--  |       |   1   |   0   |    1   |   0   |   1   |    0   |
+--  |------------------------------------------------------------------------------------------------------
+--  | ID2   |       MachineName1     |       MachineName2     |
+--  |       | Coin1 | Coin2 | Coin 3 | Coin1 | Coin2 | Coin 3 |
+--  |       |   1   |       |    1   |       |       |        |
+-----------------------------------------------------------------------------------------------------------
+-- psql reviseddb -a -f revisedDB.psql  
+
+DROP TABLE IF EXISTS users cascade;
+DROP TABLE IF EXISTS machines cascade;
+DROP TABLE IF EXISTS collections cascade;
+DROP TABLE IF EXISTS coins cascade;
+DROP TABLE IF EXISTS locations cascade;
+
+CREATE TABLE users(
+    id SERIAL,
+    userid TEXT,
+    email TEXT,
+    pass TEXT,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE machines(
+    id SERIAL PRIMARY KEY,
+    machinename TEXT
+);
+
+CREATE TABLE locations(
+    id SERIAL PRIMARY KEY,
+    col_n DECIMAL(7,3),  
+    col_w DECIMAL(7,3),  
+    fk_machine_id INT REFERENCES machines (id)  
+);
+
+CREATE TABLE coins(
+    id SERIAL PRIMARY KEY,
+    coinname text,
+    fk_machine_id INT REFERENCES machines (id)
+);
+
+CREATE TABLE collections(
+    id SERIAL,
+    PRIMARY KEY (id),
+    fk_user_id INT REFERENCES users (id),
+    fk_coins_id INT REFERENCES coins (id)
+);
+
+CREATE OR REPLACE FUNCTION insert_user(username TEXT, mail TEXT, pw TEXT) RETURNS void AS
+    $$
+    DECLARE collectionid INT;
+    BEGIN
+        INSERT INTO collections values(default) RETURNING id INTO collectionid;
+        INSERT INTO users (userid, email, pass) VALUES (username, mail, pw);
+    END;
+    $$ LANGUAGE PLPGSQL;
+
+-- for every machine you add, you insert 3 coins as well 
+
+
+-- --using "insert_user" function prevents u from having to type out all the params and values 
+SELECT insert_user('diane', 'd@gmail.com', 'p0ma');
+SELECT insert_user('chandler', 'c@gmail.com', 'lavitar');
+
+INSERT INTO machines(machinename)
+VALUES ('Penny Arcade #1');
+INSERT INTO machines(machinename)
+VALUES ('Penny Arcade #2');
+
+INSERT INTO coins (coinname, fk_machine_id)
+VALUES ('Peter Pan, Walts "Leave Today…"', 1);
+INSERT INTO coins (coinname, fk_machine_id)
+VALUES ('Mickey, Walts "Do the Impossible" Castle', 1);
+INSERT INTO coins (coinname, fk_machine_id)
+VALUES ('Walts "If you can dream it."', 1);
+INSERT INTO coins (coinname, fk_machine_id)
+VALUES ('Walts ', 2);
+
+INSERT INTO locations (col_n, col_w, fk_machine_id)
+VALUES (33.811259, -117.919210, 1);
+INSERT INTO locations (col_n, col_w, fk_machine_id)
+VALUES (33.811259, -117.3333, 2);
+
+INSERT INTO collections (fk_user_id, fk_coins_id)
+VALUES (1, 3);
+
+SELECT * FROM users;
+SELECT * FROM machines;
+SELECT * FROM locations; 
+SELECT * FROM coins;
+
+SELECT * FROM collections;
+
+
+
+
