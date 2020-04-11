@@ -54,49 +54,56 @@ CREATE TABLE collections(
 
 CREATE OR REPLACE FUNCTION insert_user(username TEXT, mail TEXT, pw TEXT) RETURNS void AS
     $$
-    DECLARE collectionid INT;
+    -- DECLARE collectionid INT;
     BEGIN
-        INSERT INTO collections values(default) RETURNING id INTO collectionid;
+        -- INSERT INTO collections values(default) RETURNING id INTO collectionid;
         INSERT INTO users (userid, email, pass) VALUES (username, mail, pw);
     END;
     $$ LANGUAGE PLPGSQL;
 
 -- for every machine you add, you insert 3 coins as well 
+CREATE OR REPLACE FUNCTION create_machine(machine TEXT) RETURNS void AS
+    $$
+    BEGIN
+        INSERT INTO machines (machinename) VALUES (machine);
+    END;
+    $$ LANGUAGE PLPGSQL;
+
+CREATE OR REPLACE FUNCTION insert_machine(fk_machine INT, coin_one TEXT, coin_two TEXT, coin_three TEXT, n DECIMAL, w DECIMAL) RETURNS void AS
+    $$
+    BEGIN
+        INSERT INTO coins (coinname, fk_machine_id) VALUES (coin_one, fk_machine);
+        INSERT INTO coins (coinname, fk_machine_id) VALUES (coin_two, fk_machine);
+        INSERT INTO coins (coinname, fk_machine_id) VALUES (coin_three, fk_machine);
+        INSERT INTO locations (col_n, col_w, fk_machine_id) VALUES (n, w, fk_machine);
+    END;
+    $$ LANGUAGE PLPGSQL;
 
 
 -- --using "insert_user" function prevents u from having to type out all the params and values 
 SELECT insert_user('diane', 'd@gmail.com', 'p0ma');
 SELECT insert_user('chandler', 'c@gmail.com', 'lavitar');
-
-INSERT INTO machines(machinename)
-VALUES ('Penny Arcade #1');
-INSERT INTO machines(machinename)
-VALUES ('Penny Arcade #2');
-
-INSERT INTO coins (coinname, fk_machine_id)
-VALUES ('Peter Pan, Walts "Leave Today…"', 1);
-INSERT INTO coins (coinname, fk_machine_id)
-VALUES ('Mickey, Walts "Do the Impossible" Castle', 1);
-INSERT INTO coins (coinname, fk_machine_id)
-VALUES ('Walts "If you can dream it."', 1);
-INSERT INTO coins (coinname, fk_machine_id)
-VALUES ('Walts ', 2);
-
-INSERT INTO locations (col_n, col_w, fk_machine_id)
-VALUES (33.811259, -117.919210, 1);
-INSERT INTO locations (col_n, col_w, fk_machine_id)
-VALUES (33.811259, -117.3333, 2);
+SELECT create_machine('Penny Arcade #1');
+SELECT insert_machine(1, 'Peter Pan, Walts "Leave Today…"', 'pennyname', 'another penny', 33.811259, -117.919210);
 
 INSERT INTO collections (fk_user_id, fk_coins_id)
 VALUES (1, 3);
+
+INSERT INTO collections (fk_user_id, fk_coins_id)
+VALUES (1, 1);
+----------------------------------------------------------
 
 SELECT * FROM users;
 SELECT * FROM machines;
 SELECT * FROM locations; 
 SELECT * FROM coins;
-
 SELECT * FROM collections;
 
+SELECT * FROM machines
+LEFT JOIN locations ON locations.fk_machine_id = machines.id
+LEFT JOIN coins ON coins.fk_machine_id = machines.id;
 
-
+SELECT * FROM users
+LEFT JOIN collections ON collections.fk_user_id = users.id
+-- WHERE userid = 'diane';
 
