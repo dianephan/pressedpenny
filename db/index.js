@@ -26,23 +26,22 @@ const {
 // })
 
 const pool = new Pool({
-  user: '',
+  user: 'postgres',
   host: 'localhost',
   database: 'pennydb',
-  password: '',
+  password: 123,
   port: 5432,
-  connectionString: '',
+  // connectionString: '/var/run/postgresql'
 });
 
 const client = new Client({
-  user: '',
+  user: 'postgres',
   host: 'localhost',
   database: 'pennydb',
-  password: '',
+  password: 123,
   port: 5432,
-  connectionString: '',
-
-})
+  // connectionString: 'var/run/postgresql',
+});
 
 client.connect()
 
