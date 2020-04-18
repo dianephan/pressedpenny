@@ -13,12 +13,12 @@
 -----------------------------------------------------------------------------------------------------------
 -- psql pennydb -a -f revisedDB.psql  
 
-DROP TABLE IF EXISTS users cascade;
-DROP TABLE IF EXISTS machines cascade;
-DROP TABLE IF EXISTS collections cascade;
-DROP TABLE IF EXISTS coins cascade;
-DROP TABLE IF EXISTS locations cascade;
-DROP FUNCTION get_user_map_data(INT);
+-- DROP TABLE IF EXISTS users cascade;
+-- DROP TABLE IF EXISTS machines cascade;
+-- DROP TABLE IF EXISTS collections cascade;
+-- DROP TABLE IF EXISTS coins cascade;
+-- DROP TABLE IF EXISTS locations cascade;
+-- DROP FUNCTION get_user_map_data(INT);
 
 CREATE TABLE users(
     id SERIAL,
@@ -99,10 +99,10 @@ CREATE OR REPLACE FUNCTION get_user_map_data (input_userid INT)
         fkid INT, 
         name TEXT,
         year INT,
-        coin TEXT,
-        machine TEXT, 
-        north DECIMAL,
-        west DECIMAL        
+        coinname TEXT,
+        machinename TEXT, 
+        col_n DECIMAL,
+        col_w DECIMAL        
     )
     AS $$ 
     BEGIN 
@@ -123,8 +123,8 @@ CREATE OR REPLACE FUNCTION get_user_map_data (input_userid INT)
 
 
 -- --using "insert_user" function prevents u from having to type out all the params and values 
-SELECT insert_user('diane', 'd@gmail.com', 'p0ma');
-SELECT insert_user('chandler', 'c@gmail.com', 'lavitar');
+-- SELECT insert_user('diane', 'd@gmail.com', 'p0ma');
+-- SELECT insert_user('chandler', 'c@gmail.com', 'lavitar');
 
 SELECT create_machine('Penny Arcade #1');
 SELECT insert_machine(1, 'Peter Pan, Walts "Leave Today…"', 'Mickey, Walts "Do the Impossible" Castle', 'Walts "If you can dream it."', 33.811259, -117.919210);

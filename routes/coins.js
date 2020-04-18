@@ -21,13 +21,4 @@ router.get('/:id', async (req, res) => {
     res.send(rows[0])
 })
 
-// // put this in its own js page 
-// router.get('/:id', async (req, res) => {
-//     const id = req.params.id;
-//     // console.log(id)
-//     const { rows } = await db.query(`SELECT * FROM get_user_map_data(${id})`)
-//     // console.log(rows)
-//     res.send(rows[0])
-// })
-
 module.exports = router

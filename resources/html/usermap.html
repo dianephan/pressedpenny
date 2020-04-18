@@ -1,4 +1,4 @@
-<!-- app.js calls this homepage! 
+<!-- users.js calls this homepage! 
   - make get req in my own API
   - need to make HTTP call to my own server 
 -->
@@ -19,40 +19,50 @@
     </style>
   </head>
   <body>
-    <h3>Disney Coin Map</h3>
+    <h3>Here are the coins you collected so far!</h3>
     <!--The div element for the map -->
     <div id="map"></div>
     <script>
-      
+    
+    const Router = require('express-promise-router')
+    const db = require('/../../db')
+    const router = new Router()
+    const path = require('path');           //this helps the google maps api show up
+
     // fetch func = asynchronous so that all my data is retrieved and completed before initializing map
     // json is data type to hold bunch of key values 
     async function initData() {
-      const response = await fetch('http://localhost:3000/coins/all');
+      const response = await fetch('http://localhost:3000/users/:id');
+    //   const response = await db.query(`SELECT * FROM get_user_map_data(${id})`);
       const json = response.json();
       console.log(json);
-      console.log("hi");
+      console.log("hi user idk ur username tho");
       return json;
     }
+
+    //mark what u collected as one color
+    //mark missing as another color???? 
 
     // getting data from my own API (initData()) to build map 
     async function initMap(data) {
       var data = await initData(data);
-      console.log(data)
+      console.log("successfully awaited data");
+      console.log(data);
       console.log('the length of array is : ' + data.length);
 
       var dland = { lat: 33.812, lng: -117.918 };
       var hypsmtn = { lat: 33.811, lng: -117.918 };
 
       // The map, centered at dland
-      var map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 17, center: dland});
+      var map = new google.maps.Map(document.getElementById('map'), {zoom: 17, center: dland});
       var k;
       var coin1 = "";
       var coin2 = "";
       var coin3 = "";     
 
       for (i in data) {
-        const currentMarker = { lat: parseFloat(data[i].col_n), lng: parseFloat(data[i].col_w) };
+        print.console(data[i].north);
+        const currentMarker = { lat: parseFloat(data[i].north), lng: parseFloat(data[i].west) };
         console.log(currentMarker);
         const marker2 = new google.maps.Marker({ position: currentMarker, map: map });
 
@@ -63,15 +73,15 @@
           coin3 = "";  
         }
         if (!coin1){
-          coin1 = data[i].coinname;
+          coin1 = data[i].coin;
         }
         else if (!coin2 && (coin2 != coin1)) {
-          coin2 = data[i].coinname;
+          coin2 = data[i].coin;
         }
         else if (!coin3 && (coin3 != coin2) && (coin3 != coin1)) {
-          coin3 = data[i].coinname;
+          coin3 = data[i].coin;
         }    
-        const name = data[i].machinename;
+        const name = data[i].machine;
         //no idea what line below does... 
         // document.getElementById("mytext").innerHTML = test;//Now you get the js variable inside your form element
 
@@ -95,6 +105,8 @@
         });
     }
   }
+
+  module.exports = router   //might not be necessary 
 
   </script>
     <!--Load the API from the specified URL
