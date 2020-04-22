@@ -9,7 +9,7 @@ As a pressed coin collector for 10+ years and a lifetime Disney fan, I dislike h
 
 <b>Please reach out to me if you are interested in seeing the presentation I created for this project!</b>
 
-
+![]<img src = "readmeimages/mapdemo.png">
 
 ----------------------------------
 Revisited this project in 2020.  need to provide proper documemntation for myself lol
