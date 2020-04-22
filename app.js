@@ -29,6 +29,7 @@ app.get('/collect', (req, res) => {
     res.render('collectcoin.ejs')
 })
 
+
 const port = process.env.PORT || 3000;
 const server = app.listen(port, () => console.log(`Listening on port ${port}`)).on("error", console.log);
 

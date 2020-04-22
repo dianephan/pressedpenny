@@ -1,3 +1,7 @@
+-- !!! DEPRECATED FILE!!! 
+-- but keeping this to show how far I've come since!!! :P 
+
+
 -- MAC 
 -- psql pennydb -a -f tester.psql  
 

@@ -52,9 +52,8 @@ router.post('/collect', async (req, res) => {
 // // put this in its own js page 
 router.get('/:id', async (req, res) => {
     const id = req.params.id;
-    const { rows } = await db.query(`SELECT * FROM get_user_map_data(${id})`)
+    const { rows } = await db.query(`SELECT * FROM get_user_map_data(${id})`);
     // res.send(rows)
-    // res.sendFile(path.join(__dirname + '/../views/usermap.ejs'));
     res.sendFile(path.join(__dirname + '/../resources/html/usermap.html'));
 })
 

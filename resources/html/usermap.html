@@ -24,20 +24,24 @@
     <div id="map"></div>
     <script>
     
-    const Router = require('express-promise-router')
-    const db = require('/../../db')
-    const router = new Router()
-    const path = require('path');           //this helps the google maps api show up
+    //are the next 4 lines necessary? 
+    // const Router = require('express-promise-router')
+    // const db = require('/../../db')
+    // const router = new Router()
+    // const path = require('path');           //this helps the google maps api show up
+
 
     // fetch func = asynchronous so that all my data is retrieved and completed before initializing map
     // json is data type to hold bunch of key values 
     async function initData() {
-      const response = await fetch('http://localhost:3000/users/:id');
-    //   const response = await db.query(`SELECT * FROM get_user_map_data(${id})`);
+      const my_req = await fetch('http://localhost:3000/users/:id'); 
+    //   const my_req = await fetch('http://localhost:3000/users/' + id);
+    //   const response = await fetch(my_req);
       const json = response.json();
       console.log(json);
       console.log("hi user idk ur username tho");
       return json;
+    
     }
 
     //mark what u collected as one color
