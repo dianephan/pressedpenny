@@ -1,7 +1,6 @@
 /*
     index.js is inside /routes to route us to the coins page 
 */
-
 const coins = require('./coins')
 const users = require('./users')
 

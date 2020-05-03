@@ -28,6 +28,8 @@
     // json is data type to hold bunch of key values 
     async function initData() {
       const response = await fetch('http://localhost:3000/users/:id');
+      // console.log(req.session.email, " is the email in their personal page now")
+      
       const json = response.json();
       console.log(json);
       console.log("hi user idk ur username tho");
@@ -39,6 +41,8 @@
 
     // getting data from my own API (initData()) to build map 
     async function initMap(data) {
+      console.log(req.session.resultid, " is the id in the usermap.ejs page")      
+
       var data = await initData(data);
       console.log(data)
       console.log('the length of array is : ' + data.length);
