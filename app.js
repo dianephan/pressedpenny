@@ -6,6 +6,9 @@ var bodyParser = require('body-parser');
 const path = require('path');           //this helps the google maps api show up
 const db = require('./db');
 
+
+
+
 //for login session
 const redis = require('redis');
 const redisStore = require('connect-redis')(session);
@@ -22,8 +25,8 @@ app.use(session({
     secret: 'ssshhhhh',
     // create new redis store.
     store: new redisStore({ host: 'localhost', port: 6379, client: client,ttl : 260}),
-    saveUninitialized: false,
-    resave: false
+    saveUninitialized: true,
+    resave: true //originally F but unsure
 }));
 
 // const router = express.Router();     //no idea what this does 
@@ -44,21 +47,28 @@ app.get('/admin',(req,res) => {
 });
 
 app.get('/logout',(req,res) => {
-    res.write(`<h1>Hello ${req.session.email} u tryna log out? </h1><br>`);
+    const email = req.body.email
+    console.log("yo u trying to log out %s", email);
+    // res.write(`<h1>Hello u tryna log out? </h1><br>`);
     req.session.destroy((err) => {
         if(err) {
             return console.log(err);
         }
-        console.log(`${req.session.email}  tryna log out`)
-        res.end('<a href='+'/logout'+'>Logout</a>');
+        res.end('<a href='+'/bye'+'>Logout</a>');
     });
+});
+
+
+app.get('/bye',(req,res) => {
+    res.send("you have peaced out");
+    // res.write(`<h1> you have peaced out </h1><br>`);
 });
 
 app.get('/registration', (req, res) => {
     // const email = req.body.email
     // const pass = req.body.password
     // console.log("registering user: %s %s", email, pass);
-    res.sendFile(path.join(__dirname + '/resources/html/registration.html'))
+    res.send("registration page here")
 })
 
 app.post('/register', (req, res) => {
@@ -66,24 +76,28 @@ app.post('/register', (req, res) => {
     res.send("Successful registration  dawg")
 })
 
-app.get('/login', (req, res) => {
+app.get('/login', async (req, res) => {
+    // var sessionData = req.session;   //dont remember what this is
     const email = req.body.email
     const pass = req.body.password
+    res.render('logindex.ejs')
+})
+
+app.post('/loginsession', async (req, res) => {
+    const email = req.body.email
+    const pass = req.body.password
+
     const myQuery = `SELECT EXISTS (SELECT 1 FROM users WHERE email = '${email}' AND  pass = '${pass}')`
     const result = await db.query(myQuery)
-    console.log("post received: %s %s", email, pass);
+    // await db.query(myQuery)
     console.log(result.rows[0].exists)
-    
     if (result.rows[0].exists) {
-        res.send("Successful login.")
-        // res.sendFile(path.join(__dirname + '/../resources/html/map.html'));
+        var htmlData = 'Hello:' + email + ' u successfully logged in';
+        console.log("post received: %s %s", email, pass);
+        res.send(htmlData)
     } else {
         res.send("not scucessful")
     }
-})
-
-app.post('/loginsession', (req, res) => {
-    res.send("Successful login ini loginsession")
 })
 
 
