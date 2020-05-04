@@ -11,6 +11,7 @@ const redis = require('redis');
 const redisStore = require('connect-redis')(session);
 const client  = redis.createClient();
 var parseurl = require('parseurl')
+
 //////////////////////////////
 
 const app = express();
@@ -24,7 +25,7 @@ app.use(session({
     // create new redis store.
     store: new redisStore({ host: 'localhost', port: 6379, client: client,ttl : 260}),
     saveUninitialized: true,
-    resave: false //originally F but unsure
+    resave: true //originally F but unsure
 }));
 
 // const router = express.Router();     //no idea what this does 
@@ -44,14 +45,18 @@ app.get('/admin',(req,res) => {
     }
 });
 
-app.get('/logout',(req,res) => {
+app.use('/logout', async (req,res) => {
     req.session.email = req.body.email
+    if (!req.session.views) {
+        req.session.views = {}
+    }
     console.log("yo u trying to log out ", req.session.email);    
     // res.write(`<h1>Hello u tryna log out? </h1><br>`);
     req.session.destroy((err) => {
         if(err) {
             return console.log(err);
         }
+        // res.write(` '<h1>bye ' + ' ${req.session.email} ' </h1><br>'`);
         res.end('<a href = '+'/bye'+'>Logout</a>');
     });
 });
@@ -64,15 +69,16 @@ app.get('/bye',(req,res) => {
 });
 
 app.get('/registration', (req, res) => {
-    // const email = req.body.email
-    // const pass = req.body.password
-    // console.log("registering user: %s %s", email, pass);
-    res.send("registration page here")
+    res.sendFile(path.join(__dirname + '/resources/html/registration.html'));
 })
 
-app.post('/register', (req, res) => {
-    //reaches success but not inserted into db yet 
-    res.send("Successful registration  dawg")
+app.post('/register', async (req, res) => {
+    const userid = req.body.userid
+    const email = req.body.email
+    const pass = req.body.password
+    const myQuery = `SELECT insert_user('${userid}', '${email}', '${pass}')`
+    await db.query(myQuery)
+    res.send("Success boyo")
 })
 
 app.get('/login', async (req, res) => {
@@ -82,6 +88,8 @@ app.get('/login', async (req, res) => {
     res.render('logindex.ejs')
 })
 
+
+////// USER LOGS IN TO SEE WHAT THEY HAVE AND WHAT THEY DONT HAVE \\\\\\
 app.post('/loginsession', async (req, res) => {
     const email = req.body.email
     const pass = req.body.password
@@ -115,5 +123,3 @@ const port = process.env.PORT || 3000;
 const server = app.listen(port, () => console.log(`Listening on port ${port}`)).on("error", console.log);
 
 module.export = server
-
-
