@@ -19,54 +19,61 @@
     </style>
   </head>
   <body>
-    <h3>Here are the coins you collected so far!</h3>
+    <h3>Here is your checklist!</h3>
     <!--The div element for the map -->
     <div id="map"></div>
     <script>
-    
-    //are the next 4 lines necessary? 
-    // const Router = require('express-promise-router')
-    // const db = require('/../../db')
-    // const router = new Router()
-    // const path = require('path');           //this helps the google maps api show up
-
 
     // fetch func = asynchronous so that all my data is retrieved and completed before initializing map
-    // json is data type to hold bunch of key values 
     async function initData() {
-      const my_req = await fetch('http://localhost:3000/users/:id'); 
-    //   const my_req = await fetch('http://localhost:3000/users/' + id);
-    //   const response = await fetch(my_req);
+      const response = await fetch('http://localhost:3000/coins/all');
       const json = response.json();
       console.log(json);
-      console.log("hi user idk ur username tho");
+      console.log("hi");
       return json;
-    
     }
 
-    //mark what u collected as one color
-    //mark missing as another color???? 
+    //define function for the checkbox 
+    async function myFunction() {
+      var checkBox = document.getElementById("myCheck");
+      var text = document.getElementById("text");
+      if (checkBox.checked == true){
+        text.style.display = "block";
+      } else {
+        text.style.display = "none";
+      }
+    }
+
+    async function myFunctionThree() {
+      var checkBox = document.getElementById("myCheck");
+      var text = document.getElementById("text");
+      if (checkBox.checked == true){
+        text.style.display = "block";
+      } else {
+        text.style.display = "none";
+      }
+    }
+
 
     // getting data from my own API (initData()) to build map 
     async function initMap(data) {
       var data = await initData(data);
-      console.log("successfully awaited data");
-      console.log(data);
+      console.log(data)
       console.log('the length of array is : ' + data.length);
 
       var dland = { lat: 33.812, lng: -117.918 };
       var hypsmtn = { lat: 33.811, lng: -117.918 };
 
       // The map, centered at dland
-      var map = new google.maps.Map(document.getElementById('map'), {zoom: 17, center: dland});
+      var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 17, center: dland});
       var k;
       var coin1 = "";
       var coin2 = "";
       var coin3 = "";     
 
       for (i in data) {
-        print.console(data[i].north);
-        const currentMarker = { lat: parseFloat(data[i].north), lng: parseFloat(data[i].west) };
+        const currentMarker = { lat: parseFloat(data[i].col_n), lng: parseFloat(data[i].col_w) };
         console.log(currentMarker);
         const marker2 = new google.maps.Marker({ position: currentMarker, map: map });
 
@@ -77,15 +84,15 @@
           coin3 = "";  
         }
         if (!coin1){
-          coin1 = data[i].coin;
+          coin1 = data[i].coinname;
         }
         else if (!coin2 && (coin2 != coin1)) {
-          coin2 = data[i].coin;
+          coin2 = data[i].coinname;
         }
         else if (!coin3 && (coin3 != coin2) && (coin3 != coin1)) {
-          coin3 = data[i].coin;
+          coin3 = data[i].coinname;
         }    
-        const name = data[i].machine;
+        const name = data[i].machinename;
         //no idea what line below does... 
         // document.getElementById("mytext").innerHTML = test;//Now you get the js variable inside your form element
 
@@ -94,14 +101,28 @@
           '</div>' +
           '<h1 id="firstHeading" class="firstHeading">' + name + '</h1>' +
           '<div id="bodyContent">' +
-          '<p>' + coin1 + '<br>' + coin2 + '<br>' + coin3 +
-          '</p>' +
-          '</div>' +
+          '<p>' + coin1 + '</p>' +
+          '<input type="checkbox" id="myCheck"  onclick="myFunction()"> ' 
+            + '<p id="text" style="display:none">CHECKED!</p>' 
+            + '<br> <p>' 
+            + coin2 
+            + '</p> <input type="checkbox" id="myCheck"  onclick="myFunction()"> '
+            + '<p id="text" style="display:none">CHECKED!</p>'
+            + '<br> <p>' 
+            + coin3 + '</p>' 
+            + '<input type="checkbox" id="myCheck"  onclick="myFunction()"> ' 
+            + '<p id="text" style="display:none">CHECKED!</p>' 
+            + '<br>' 
+            + '</div>' +
           '</div>';
-        console.log("we are on element : " + i + " with " + name);
+
+        
+        // console.log("we are on element : " + i + " with " + name);
+        
+        //code below will show up in the google maps info window 
         const infowindow = new google.maps.InfoWindow({
           content: contentString2,
-          maxWidth: 200
+          maxWidth: 300
         });
 
         marker2.addListener('click', () => {
