@@ -16,6 +16,7 @@
         width: 1000px;
         /* The width is the width of the web page */
       }
+
     </style>
   </head>
   <body>
@@ -23,6 +24,9 @@
     <!--The div element for the map -->
     <div id="map"></div>
     <script>
+
+    var username = { username };
+    console.log(username);
 
     // fetch func = asynchronous so that all my data is retrieved and completed before initializing map
     async function initData() {
@@ -36,7 +40,7 @@
     //define function for the checkbox 
     function myFunction() {
       var checkBox = document.getElementById("myCheck");
-      var text = document.getElementById("text");
+      // var text = document.getElementById("text");
       if (checkBox.checked == true){
         // text.style.display = "block";
         console.log("you checked coin1")
@@ -49,7 +53,6 @@
 
     async function myFunctionTwo() {
       var checkBoxTwo = document.getElementById("myCheckTwo");
-      var text = document.getElementById("text");
       if (checkBoxTwo.checked == true){
         console.log("you checked coin2")
       } else {
@@ -60,7 +63,6 @@
 
     async function myFunctionThree() {
       var checkBoxThree = document.getElementById("myCheckThree");
-      var text = document.getElementById("text");
       if (checkBoxThree.checked == true){
         console.log("you checked coin3")
       } else {
@@ -69,11 +71,18 @@
       }
     }
 
+
+
+
     // getting data from my own API (initData()) to build map 
     async function initMap(data) {
+      // req.session.currentID = currentID
+      // req.session.username = username
+      // console.log (req.session.username, "'s ID = ", req.session.currentID)
+
       var data = await initData(data);
       console.log(data)
-      console.log('the length of array is : ' + data.length);
+      // console.log('the length of array is : ' + data.length);
 
       var dland = { lat: 33.812, lng: -117.918 };
       var hypsmtn = { lat: 33.811, lng: -117.918 };
@@ -88,7 +97,7 @@
 
       for (i in data) {
         const currentMarker = { lat: parseFloat(data[i].col_n), lng: parseFloat(data[i].col_w) };
-        console.log(currentMarker);
+        // console.log(currentMarker);
         const marker2 = new google.maps.Marker({ position: currentMarker, map: map });
 
         if (i && (i % 3 === 0)){

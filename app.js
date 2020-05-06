@@ -6,20 +6,23 @@ var bodyParser = require('body-parser');
 const path = require('path');           //this helps the google maps api show up
 const db = require('./db');
 
-//for login session
+////////////for login session//////////
 const redis = require('redis');
 const redisStore = require('connect-redis')(session);
 const client  = redis.createClient();
 var parseurl = require('parseurl')
 
-//url parsing
+//////////url parsing//////////
 const http = require('http');
 const url = require('url');
+///////cookies for sessions////////
+var cookieParser = require('cookie-parser');
 //////////////////////////////
 
 const app = express();
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: false })); // support encoded bodies
+app.use(cookieParser());
 
 mountRoutes(app)
 
@@ -49,18 +52,16 @@ app.get('/admin',(req,res) => {
 });
 
 app.use('/logout', async (req,res) => {
-    req.session.email = req.body.email
-    if (!req.session.views) {
-        req.session.views = {}
-    }
-    console.log("yo u trying to log out ", req.session.email);    
-    // res.write(`<h1>Hello u tryna log out? </h1><br>`);
+    console.log("yo u trying to log out ", usersInfo.username);    
     req.session.destroy((err) => {
         if(err) {
             return console.log(err);
         }
         // res.write(` '<h1>bye ' + ' ${req.session.email} ' </h1><br>'`);
-        res.end('<a href = '+'/bye'+'>Logout</a>');
+        //it will clear the userData cookie 
+        res.clearCookie('userData'); 
+        res.send('user logout successfully'); 
+        // res.end('<a href = '+'/bye'+'>Logout</a>');
     });
 });
 
@@ -81,6 +82,7 @@ app.post('/register', async (req, res) => {
     const pass = req.body.password
     const myQuery = `SELECT insert_user('${userid}', '${email}', '${pass}')`
     await db.query(myQuery)
+    console.log(userid, "has been sucessfully registered")
     res.send("Success boyo")
 })
 
@@ -93,20 +95,40 @@ http.createServer(function (req, res) {
     res.end('Feel free to add query parameters to the end of the url');
   }).listen(5000);
 
+//following g4g 
+//JSON object to be added to cookie (GLOBAL VARIABLE)  
+let usersInfo = {}
+
+//first you set, then you get data 
+
+//route for adding cookie 
+app.get('/setuser', (req, res)=>{ 
+    res.cookie("userData", usersInfo); 
+    res.send('user data added to cookie'); 
+    console.log(usersInfo, " = usersInfo")
+}); 
+
+//Iterate users data from cookie 
+app.get('/getuser', (req, res)=>{ 
+    //shows all the cookies 
+    res.send(req.cookies); 
+}); 
+
 app.get('/login', async (req, res) => {
     // var sessionData = req.session;   //dont remember what this is
-    const email = req.body.email
-    const pass = req.body.password
-
     //should i combine logindex with their personalized map 
     res.render('logindex.ejs')
 })
 
 ////// USER LOGS IN TO SEE WHAT THEY HAVE AND WHAT THEY DONT HAVE \\\\\\
 app.post('/loginsession', async (req, res) => {
+    var o = {} //empty object
+    key = 'loggeduser'; 
+    o[key] = []; //empty array to push values into 
+
     req.session.email = req.body.email
     req.session.pass = req.body.password
-
+    
     const myQuery = `SELECT EXISTS (SELECT 1 FROM users WHERE email = '${req.session.email}' AND  pass = '${req.session.pass}')`
     const idQuery  = `SELECT * FROM users WHERE email = '${req.session.email}' AND  pass = '${req.session.pass}'`       //for the logged in user's info
     const result = await db.query(myQuery)
@@ -114,20 +136,30 @@ app.post('/loginsession', async (req, res) => {
     const currentID = idResult.rows[0].id
     const username = idResult.rows[0].userid
     
+    req.session.currentID = currentID
+    req.session.username = username
     
-    console.log(username, "'s id = ", currentID)
-    console.log(result.rows[0].exists)
+    usersInfo = { 
+        username : req.session.username, 
+        id : req.session.currentID
+    };     
+    o[key].push(usersInfo);
+    JSON.stringify(o); 
+    console.log(o);
 
     if (result.rows[0].exists) {
         var htmlData = 'Hello:' + req.session.email + ' u successfully logged in';
         console.log("post received: %s %s", req.session.email, req.session.pass);
         // res.send(htmlData)
-        res.sendFile(path.join(__dirname + '/resources/html/usermap.html'));
+
+        res.sendFile(path.join(__dirname + '/resources/html/usermap.html'), {username : username});
         // TO DO : NEED TO REDIRECT TO PERSONALIZED HTML PAGE 
         // res.render('collectcoin.ejs')
     } else {
         res.send("not scucessful")
     }
+
+
 })
 
 //getting usermap

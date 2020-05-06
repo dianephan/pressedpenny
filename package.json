@@ -16,6 +16,7 @@
   "dependencies": {
     "bcrypt": "^3.0.6",
     "connect-redis": "^4.0.4",
+    "cookie-parser": "^1.4.5",
     "dotenv": "^8.0.0",
     "ejs": "^2.6.2",
     "express": "^4.17.1",
