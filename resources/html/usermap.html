@@ -24,9 +24,7 @@
     <!--The div element for the map -->
     <div id="map"></div>
     <script>
-
-    var username = { username };
-    console.log(username);
+      console.log("passed in parameters : ", usersInfo);
 
     // fetch func = asynchronous so that all my data is retrieved and completed before initializing map
     async function initData() {
@@ -71,14 +69,9 @@
       }
     }
 
-
-
-
     // getting data from my own API (initData()) to build map 
     async function initMap(data) {
-      // req.session.currentID = currentID
-      // req.session.username = username
-      // console.log (req.session.username, "'s ID = ", req.session.currentID)
+      // console.log("passed in parameters : ", usersInfo);
 
       var data = await initData(data);
       console.log(data)

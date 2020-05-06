@@ -52,7 +52,7 @@ app.get('/admin',(req,res) => {
 });
 
 app.use('/logout', async (req,res) => {
-    console.log("yo u trying to log out ", usersInfo.username);    
+    console.log(usersInfo.username, " is logging out");    
     req.session.destroy((err) => {
         if(err) {
             return console.log(err);
@@ -63,13 +63,6 @@ app.use('/logout', async (req,res) => {
         res.send('user logout successfully'); 
         // res.end('<a href = '+'/bye'+'>Logout</a>');
     });
-});
-
-app.get('/bye',(req,res) => {
-    req.session.email = req.body.email
-    console.log("peace out", req.session.email);    
-    res.send("you have peaced out");
-    // res.write(`<h1> you have peaced out </h1><br>`);
 });
 
 app.get('/registration', (req, res) => {
@@ -86,26 +79,18 @@ app.post('/register', async (req, res) => {
     res.send("Success boyo")
 })
 
-//trying a node tutorial 
-
-http.createServer(function (req, res) {
-    const queryObject = url.parse(req.url,true).query;
-    console.log(queryObject);
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.end('Feel free to add query parameters to the end of the url');
-  }).listen(5000);
-
 //following g4g 
 //JSON object to be added to cookie (GLOBAL VARIABLE)  
 let usersInfo = {}
 
 //first you set, then you get data 
-
 //route for adding cookie 
 app.get('/setuser', (req, res)=>{ 
     res.cookie("userData", usersInfo); 
-    res.send('user data added to cookie'); 
-    console.log(usersInfo, " = usersInfo")
+    // res.send('user data added to cookie'); 
+    console.log("setting user ", usersInfo, " = usersInfo")
+    res.sendFile(path.join(__dirname + '/resources/html/usermap.html'), {usersInfo});
+    // res.end('<a href='+'/users/' + usersInfo.id +'>View your collection</a>');
 }); 
 
 //Iterate users data from cookie 
@@ -115,8 +100,6 @@ app.get('/getuser', (req, res)=>{
 }); 
 
 app.get('/login', async (req, res) => {
-    // var sessionData = req.session;   //dont remember what this is
-    //should i combine logindex with their personalized map 
     res.render('logindex.ejs')
 })
 
@@ -130,40 +113,39 @@ app.post('/loginsession', async (req, res) => {
     req.session.pass = req.body.password
     
     const myQuery = `SELECT EXISTS (SELECT 1 FROM users WHERE email = '${req.session.email}' AND  pass = '${req.session.pass}')`
-    const idQuery  = `SELECT * FROM users WHERE email = '${req.session.email}' AND  pass = '${req.session.pass}'`       //for the logged in user's info
     const result = await db.query(myQuery)
-    const idResult = await db.query(idQuery)
-    const currentID = idResult.rows[0].id
-    const username = idResult.rows[0].userid
-    
-    req.session.currentID = currentID
-    req.session.username = username
-    
-    usersInfo = { 
-        username : req.session.username, 
-        id : req.session.currentID
-    };     
-    o[key].push(usersInfo);
-    JSON.stringify(o); 
-    console.log(o);
 
     if (result.rows[0].exists) {
         var htmlData = 'Hello:' + req.session.email + ' u successfully logged in';
         console.log("post received: %s %s", req.session.email, req.session.pass);
         // res.send(htmlData)
 
-        res.sendFile(path.join(__dirname + '/resources/html/usermap.html'), {username : username});
-        // TO DO : NEED TO REDIRECT TO PERSONALIZED HTML PAGE 
-        // res.render('collectcoin.ejs')
+        const idQuery  = `SELECT * FROM users WHERE email = '${req.session.email}' AND  pass = '${req.session.pass}'`       //for the logged in user's info
+        const idResult = await db.query(idQuery)
+        const currentID = idResult.rows[0].id
+        const username = idResult.rows[0].userid
+        
+        req.session.currentID = currentID
+        req.session.username = username
+        
+        usersInfo = { 
+            username : req.session.username, 
+            id : req.session.currentID
+        };     
+        o[key].push(usersInfo);
+        JSON.stringify(o); 
+        // console.log(o);      //prints name + id in console 
+    
+        res.writeHead(301,{Location: 'http://localhost:3000/setuser'});   
+        res.end();     
     } else {
         res.send("not scucessful")
     }
-
-
 })
 
 //getting usermap
 app.get('/usermap', (req, res) => {
+    console.log("inside usermap now") 
     res.sendFile(path.join(__dirname + '/resources/html/usermap.html'));
 })
 
@@ -194,8 +176,6 @@ app.post('/coininsert', async (req, res) => {
     var htmlData = 'Hello:' + email + ' u want to insert' + coin + 'to' + machine;
     res.send(htmlData)
 })
-
-
 
 const port = process.env.PORT || 3000;
 const server = app.listen(port, () => console.log(`Listening on port ${port}`)).on("error", console.log);
