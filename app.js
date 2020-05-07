@@ -52,7 +52,7 @@ app.get('/admin',(req,res) => {
 });
 
 app.use('/logout', async (req,res) => {
-    console.log(usersInfo.username, " is logging out");    
+    console.log('are you ready to log out?' + usersInfo.username);    
     req.session.destroy((err) => {
         if(err) {
             return console.log(err);
@@ -85,12 +85,13 @@ let usersInfo = {}
 
 //first you set, then you get data 
 //route for adding cookie 
-app.get('/setuser', (req, res)=>{ 
-    res.cookie("userData", usersInfo); 
+app.get('/welcome', (req, res)=>{ 
+    res.cookie("userData", JSON.stringify(usersInfo)); 
     // res.send('user data added to cookie'); 
     console.log("setting user ", usersInfo, " = usersInfo")
-    res.sendFile(path.join(__dirname + '/resources/html/usermap.html'), {usersInfo});
-    // res.end('<a href='+'/users/' + usersInfo.id +'>View your collection</a>');
+    res.sendFile(path.join(__dirname + '/resources/html/usermap.html'));
+    // res.end('<a href='+'/users/' + usersInfo.id +'>View your collection</a>');       //to add a button 
+    
 }); 
 
 //Iterate users data from cookie 
@@ -136,7 +137,7 @@ app.post('/loginsession', async (req, res) => {
         JSON.stringify(o); 
         // console.log(o);      //prints name + id in console 
     
-        res.writeHead(301,{Location: 'http://localhost:3000/setuser'});   
+        res.writeHead(301,{Location: 'http://localhost:3000/welcome'});   
         res.end();     
     } else {
         res.send("not scucessful")

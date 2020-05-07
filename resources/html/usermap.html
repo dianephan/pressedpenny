@@ -24,14 +24,30 @@
     <!--The div element for the map -->
     <div id="map"></div>
     <script>
-      console.log("passed in parameters : ", usersInfo);
+      //the cookies are a global variable. they need to be parsed 
+      var decodedCookie = decodeURIComponent(document.cookie);
+      var cookiedata = decodedCookie.split(';');
+      var parsedCookie = JSON.parse(cookiedata[2])
+    
+      //parsing the cookie into a string. didnt have to pass in any variable bc its a global variable 
+      function getUserData() {
+        var name = "userData=";
+        var cookiedata = decodeURIComponent(document.cookie);
+        var ca = cookiedata.split(';');
+        for(var i = 0; i < ca.length; i++) {
+          var c = ca[i].trim();
+          if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+          }
+        }
+        return "";
+      }
 
-    // fetch func = asynchronous so that all my data is retrieved and completed before initializing map
+      // fetch func = asynchronous so that all my data is retrieved and completed before initializing map
     async function initData() {
       const response = await fetch('http://localhost:3000/coins/all');
       const json = response.json();
       console.log(json);
-      console.log("hi");
       return json;
     }
 
@@ -48,7 +64,6 @@
         console.log("you unchecked coin1")
       }
     }
-
     async function myFunctionTwo() {
       var checkBoxTwo = document.getElementById("myCheckTwo");
       if (checkBoxTwo.checked == true){
@@ -58,7 +73,6 @@
         console.log("you unchecked coin2")
       }
     }
-
     async function myFunctionThree() {
       var checkBoxThree = document.getElementById("myCheckThree");
       if (checkBoxThree.checked == true){
@@ -71,7 +85,9 @@
 
     // getting data from my own API (initData()) to build map 
     async function initMap(data) {
-      // console.log("passed in parameters : ", usersInfo);
+      var loggedUserName = getUserData(); 
+      var parsedUserName = JSON.parse(loggedUserName); 
+      alert("you are logged in as " + parsedUserName.username);
 
       var data = await initData(data);
       console.log(data)
@@ -131,10 +147,6 @@
             + '<br>' 
             + '</div>' +
           '</div>';
-
-        
-        // console.log("we are on element : " + i + " with " + name);
-        
         //code below will show up in the google maps info window 
         const infowindow = new google.maps.InfoWindow({
           content: contentString2,
