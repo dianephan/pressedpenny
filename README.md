@@ -22,10 +22,6 @@ Revisited this project in 2020.  need to provide proper documemntation for mysel
 
 
 <b>Understanding Google  Maps API</b>
-* 
-
-
-
 <b> LINKS USED: </b> 
 * https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
@@ -37,11 +33,12 @@ because i had no idea what to do 90% of the time
 * type "sudo -iu postgres" to change user in unix (ex/ diane@diane --> postgres@diane)
 --if no db exist, create "pennydb" to run this file 
 
-
-
 <b> LINKS USED: </b> 
 * https://stackoverflow.com/questions/27777076/accidently-removed-postgres-default-superuser-privileges-can-i-get-it-back/27778321
 
+<b> Understanding Cookies: </b>
+<b> LINKS USED: </b>
+* https://www.w3schools.com/js/js_cookies.asp
 
 <b>Other things I learned</b>
 * run ```ps aux | grep node``` to kill ports when the same port error comes up 
