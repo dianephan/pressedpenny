@@ -51,11 +51,13 @@
       var coin2 = "";
       var coin3 = "";     
 
+      //i  is the machine n ame --> change the var name to machcine_idi
+      //EXPLAIN: what this for loop is doing (convince what its looking)
       for (i in data) {
         const currentMarker = { lat: parseFloat(data[i].col_n), lng: parseFloat(data[i].col_w) };
         console.log(currentMarker);
         const marker2 = new google.maps.Marker({ position: currentMarker, map: map });
-
+        //REFACTOR: can createa  coin class instead
         if (i && (i % 3 === 0)){
           // should clear all coins 
           coin1 = "";

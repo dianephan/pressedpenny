@@ -95,7 +95,8 @@ app.get('/welcome', (req, res)=>{
 }); 
 
 //Iterate users data from cookie 
-app.get('/getuser', (req, res)=>{ 
+app.get(
+    '/getuser', (req, res)=>{ 
     //shows all the cookies 
     res.send(req.cookies); 
 }); 
