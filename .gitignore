@@ -1,2 +1,2 @@
-./node_modules
+git rm -r --cached /mnt/d/Projects/pressedpenny/node_modules
 .env

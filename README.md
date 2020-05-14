@@ -61,4 +61,10 @@ because i had no idea what to do 90% of the time
 
 <b>Other things I learned</b>
 * run ```ps aux | grep node``` to kill ports when the same port error comes up 
-
+* working on a new branch
+    - ```git branch``` shows what branch you are on
+    - ```git switch BRANCH_NAME_HERE``` to switch to another branch
+    - to merge 2 branches
+        - git checkout BRANCH_NAME_HERE
+        - git merge master
+        - git push origin BRANCH_NAME_HERE
