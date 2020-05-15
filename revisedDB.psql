@@ -13,11 +13,11 @@
 -----------------------------------------------------------------------------------------------------------
 -- psql pennydb -a -f revisedDB.psql  
 
-DROP TABLE IF EXISTS users cascade;
-DROP TABLE IF EXISTS machines cascade;
-DROP TABLE IF EXISTS collections cascade;
-DROP TABLE IF EXISTS coins cascade;
-DROP TABLE IF EXISTS locations cascade;
+-- DROP TABLE IF EXISTS users cascade;
+-- DROP TABLE IF EXISTS machines cascade;
+-- DROP TABLE IF EXISTS collections cascade;
+-- DROP TABLE IF EXISTS coins cascade;
+-- DROP TABLE IF EXISTS locations cascade;
 -- DROP FUNCTION get_user_map_data(INT);
 
 CREATE TABLE users(

@@ -34,12 +34,11 @@ app.use(session({
     resave: true //originally F but unsure
 }));
 
-// const router = express.Router();     //no idea what this does 
-
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname + '/resources/html/map.html'));
 });
 
+//no use for admin page .. YET 
 app.get('/admin',(req,res) => {
     if(req.session.email) {
         res.write(`<h1>Hello ${req.session.email} </h1><br>`);
@@ -52,19 +51,18 @@ app.get('/admin',(req,res) => {
 });
 
 app.use('/logout', async (req,res) => {
-    console.log('are you ready to log out?' + usersInfo.username);    
+    console.log(objectUsersInfo.username + 'is ready to logout');    
     req.session.destroy((err) => {
         if(err) {
             return console.log(err);
         }
-        // res.write(` '<h1>bye ' + ' ${req.session.email} ' </h1><br>'`);
         //it will clear the userData cookie 
         res.clearCookie('userData'); 
-        res.send('user logout successfully'); 
-        // res.end('<a href = '+'/bye'+'>Logout</a>');
+        res.send('user logout successful'); 
     });
 });
 
+// redirects user to HTML form to enter their information 
 app.get('/registration', (req, res) => {
     res.sendFile(path.join(__dirname + '/resources/html/registration.html'));
 })
@@ -79,25 +77,20 @@ app.post('/register', async (req, res) => {
     res.send("Success boyo")
 })
 
-//following g4g 
-//JSON object to be added to cookie (GLOBAL VARIABLE)  
-let usersInfo = {}
+//JSON object to be added to cookie (GLOBAL VARIABLE) referenced throughout project  
+let objectUsersInfo = {}
 
-//first you set, then you get data 
-//route for adding cookie 
+//first you /setUser via res.cookie, then you redirect the user to their personalized page 
 app.get('/welcome', (req, res)=>{ 
-    res.cookie("userData", JSON.stringify(usersInfo)); 
-    // res.send('user data added to cookie'); 
-    console.log("setting user ", usersInfo, " = usersInfo")
+    res.cookie("userData", JSON.stringify(objectUsersInfo)); 
+    console.log("setting user ", objectUsersInfo, " = usersInfo")
     res.sendFile(path.join(__dirname + '/resources/html/usermap.html'));
-    // res.end('<a href='+'/users/' + usersInfo.id +'>View your collection</a>');       //to add a button 
-    
+    // res.end('<a href='+'/users/' + objectUsersInfo.id +'>View your collection</a>');       //to add a button later on?    
 }); 
 
-//Iterate users data from cookie 
+//Iterate users data from cookie (shows username, email, pw)  
 app.get(
     '/getuser', (req, res)=>{ 
-    //shows all the cookies 
     res.send(req.cookies); 
 }); 
 
@@ -110,47 +103,38 @@ app.post('/loginsession', async (req, res) => {
     var o = {} //empty object
     key = 'loggeduser'; 
     o[key] = []; //empty array to push values into 
-
     req.session.email = req.body.email
     req.session.pass = req.body.password
-    
-    const myQuery = `SELECT EXISTS (SELECT 1 FROM users WHERE email = '${req.session.email}' AND  pass = '${req.session.pass}')`
-    const result = await db.query(myQuery)
+    const queryUserData = `SELECT EXISTS (SELECT 1 FROM users WHERE email = '${req.session.email}' AND  pass = '${req.session.pass}')`
+    const userExistenceInfo = await db.query(queryUserData)
 
-    if (result.rows[0].exists) {
-        var htmlData = 'Hello:' + req.session.email + ' u successfully logged in';
+    // parse user's information if they exist in the db and add info to session cookies 
+    if (userExistenceInfo.rows[0].exists) {
+        var htmlMessage = 'Hello:' + req.session.email + 'you successfully logged in';
         console.log("post received: %s %s", req.session.email, req.session.pass);
-        // res.send(htmlData)
-
-        const idQuery  = `SELECT * FROM users WHERE email = '${req.session.email}' AND  pass = '${req.session.pass}'`       //for the logged in user's info
-        const idResult = await db.query(idQuery)
-        const currentID = idResult.rows[0].id
-        const username = idResult.rows[0].userid
-        
-        req.session.currentID = currentID
-        req.session.username = username
-        
-        usersInfo = { 
+        // res.send(htmlMessage)
+        const userIDQuery  = `SELECT * FROM users WHERE email = '${req.session.email}' AND  pass = '${req.session.pass}'`       //for the logged in user's info
+        const userIDResult = await db.query(userIDQuery)
+        const currentUserID = userIDResult.rows[0].id
+        const currentUsername = userIDResult.rows[0].userid
+        req.session.currentID = currentUserID
+        req.session.username = currentUsername
+        objectUsersInfo = { 
             username : req.session.username, 
             id : req.session.currentID
         };     
-        o[key].push(usersInfo);
-        JSON.stringify(o); 
-        // console.log(o);      //prints name + id in console 
-    
+        o[key].push(objectUsersInfo);
+        JSON.stringify(o);     
+        //now write all the user data into the global cookie (formerly /setUser instead of /welcome)
         res.writeHead(301,{Location: 'http://localhost:3000/welcome'});   
         res.end();     
     } else {
-        res.send("not scucessful")
+        res.send("Login not successful")
     }
 })
 
-//getting usermap
-app.get('/usermap', (req, res) => {
-    console.log("inside usermap now") 
-    res.sendFile(path.join(__dirname + '/resources/html/usermap.html'));
-})
 
+//please ignonre /collect and /coininsert. it may or may not be used in the final project 
 app.get('/collect', (req, res) => {
     res.render('collectcoin.ejs')
 })

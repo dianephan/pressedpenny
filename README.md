@@ -1,7 +1,7 @@
 As a pressed coin collector for 10+ years and a lifetime Disney fan, I dislike how there is no efficient and official way to keep trach of my coins through the official Disneyland app, or by printing a paper and manually checking them off. 
 
 <b> What needs to be done: </b>
-~ * Need to implement check boxes so that users can check off which coins they collected ~
+~~ * Need to implement check boxes so that users can check off which coins they collected ~~
 * DOCUMENTATION!! and cleaning up the code 
 * Allow users to register and save their progress 
 * Add all coin locations for the Disney parks in Anaheim, California and Orlando, Florida
@@ -14,13 +14,12 @@ Check out a sneak peek of the map demo:
 <img src = "readmeimages/mapdemo.png">
 
 ----------------------------------
-Revisited this project in 2020.  need to provide proper documemntation for myself lol
+I am revisting this project in 2020 and making major changes to the project to learn more about creating new feature and scaling up the project. It's been fun! Here are some resources and things I learned and wanted to take note of. 
 
 1. To run locally, type ```nodemon``` or ```node app.js``` to boot up program 
 2. when running locally, need .env file. check out my notes on db/index.js to know what to delete 
 3. UnhandledPromiseRejectionWarning: error: password authentication failed for user "diane"
-
-
+    - literally make a password for yourself 
 
 ----------------------------------
 Steps for reinstallation / running on a new machine:

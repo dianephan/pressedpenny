@@ -1,4 +1,4 @@
-<!-- users.js calls this homepage! 
+<!-- 
   - make get req in my own API
   - need to make HTTP call to my own server 
 -->
@@ -25,31 +25,33 @@
     <div id="map"></div>
     <script>
       //the cookies are a global variable. they need to be parsed 
-      var decodedCookie = decodeURIComponent(document.cookie);
-      var cookiedata = decodedCookie.split(';');
+      var decodedGlobalCookie = decodeURIComponent(document.cookie);
+      var cookiedata = decodedGlobalCookie.split(';');
       var parsedCookie = JSON.parse(cookiedata[2])
     
-      //parsing the cookie into a string. didnt have to pass in any variable bc its a global variable 
+      //take the global variable (document.cookie) and parse out the userData from login page
+      //returns string of the details of user that is logged in / set in cookie 
       function getUserData() {
-        var name = "userData=";
+        //"userData="" indicates the beginning of the string inside cookie
+        var userDataString = "userData=";
         var cookiedata = decodeURIComponent(document.cookie);
-        var ca = cookiedata.split(';');
-        for(var i = 0; i < ca.length; i++) {
-          var c = ca[i].trim();
-          if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
+        var cookieDataArray = cookiedata.split(';');
+        for(var indexOfCookieArray = 0; indexOfCookieArray < cookieDataArray.length; indexOfCookieArray++) {
+          var cookieValue = cookieDataArray[indexOfCookieArray].trim();
+          if (cookieValue.indexOf(userDataString) == 0) {
+            //return only the necessary string from the entire cookie string if matches "userData="
+            return cookieValue.substring(userDataString.length, cookieValue.length);
           }
         }
         return "";
       }
 
       // fetch func = asynchronous so that all my data is retrieved and completed before initializing map
-    async function initData() {
-      const response = await fetch('http://localhost:3000/coins/all');
-      const json = response.json();
-      console.log(json);
-      return json;
-    }
+      async function initData() {
+        const allCoinsData = await fetch('http://localhost:3000/coins/all');
+        const allCoinsDataJSON = allCoinsData.json();
+        return allCoinsDataJSON;
+      }
 
     //define function for the checkbox 
     function myFunction() {
@@ -85,9 +87,10 @@
 
     // getting data from my own API (initData()) to build map 
     async function initMap(data) {
-      var loggedUserName = getUserData(); 
-      var parsedUserName = JSON.parse(loggedUserName); 
-      alert("you are logged in as " + parsedUserName.username);
+      var loggedUserNameFromCookie = getUserData(); 
+      var parsedUserDataFromCookie = JSON.parse(loggedUserNameFromCookie); 
+      //leaving this alert here for testing purposes 
+      alert("you are logged in as " + parsedUserDataFromCookie.username);
 
       var data = await initData(data);
       console.log(data)

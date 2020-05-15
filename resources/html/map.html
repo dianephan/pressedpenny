@@ -1,16 +1,13 @@
-<!-- app.js calls this homepage! 
-  - make get req in my own API
-  - need to make HTTP call to my own server 
--->
+<!-- need to make HTTP call to my own server -->
 
 <!DOCTYPE html>
 <html>
   <head>
     <style>
       /* Set the size of the div element that contains the map */
-      #map {
+      /* change to fullscreen: 1600px by 1200% when done. currently small for testing purposes */
+        #map {
         /* 400px by 100% */
-        /* change to fullscreen: 1600px by 1200% when done */
         height: 600px;
         /* The height is 400 pixels */
         width: 1000px;
@@ -27,73 +24,73 @@
     // fetch func = asynchronous so that all my data is retrieved and completed before initializing map
     // json is data type to hold bunch of key values 
     async function initData() {
-      const response = await fetch('http://localhost:3000/coins/all');
-      const json = response.json();
-      console.log(json);
-      console.log("hi");
-      return json;
+      const allCoinsData = await fetch('http://localhost:3000/coins/all');
+      const allCoinsDataJSON = allCoinsData.json();
+      return allCoinsDataJSON;
     }
 
     // getting data from my own API (initData()) to build map 
-    async function initMap(data) {
-      var data = await initData(data);
-      console.log(data)
-      console.log('the length of array is : ' + data.length);
+    async function initMap(allCoinsData) {
+      var allCoinsData = await initData(allCoinsData);
+      console.log(allCoinsData)
+      console.log('the amount of entries in allCoinsData is : ' + allCoinsData.length);
 
-      var dland = { lat: 33.812, lng: -117.918 };
-      var hypsmtn = { lat: 33.811, lng: -117.918 };
+      var disneylandCoordinates = { lat: 33.812, lng: -117.918 };
+      var hyperSpaceMountainExample = { lat: 33.811, lng: -117.918 };
 
       // The map, centered at dland
       var map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 17, center: dland});
-      var k;
-      var coin1 = "";
-      var coin2 = "";
+        zoom: 17, center: disneylandCoordinates});
+      var coinDesign1 = "";
+      var coinDesign2 = "";
       var coin3 = "";     
 
       //i  is the machine n ame --> change the var name to machcine_idi
       //EXPLAIN: what this for loop is doing (convince what its looking)
-      for (i in data) {
-        const currentMarker = { lat: parseFloat(data[i].col_n), lng: parseFloat(data[i].col_w) };
-        console.log(currentMarker);
-        const marker2 = new google.maps.Marker({ position: currentMarker, map: map });
+      for (coinEntryIndex in allCoinsData) {
+        const currentMarkerCoordinates = { lat: parseFloat(allCoinsData[coinEntryIndex].col_n), lng: parseFloat(allCoinsData[coinEntryIndex].col_w) };
+        // console.log(currentMarker);
+        const currentMarker = new google.maps.Marker({ position: currentMarkerCoordinates, map: map });
         //REFACTOR: can createa  coin class instead
-        if (i && (i % 3 === 0)){
+
+        //the machine name is the same for every three coins so create a new string with that information
+        //after working with the three coins/one machine, clear the variables 
+        if (coinEntryIndex && (coinEntryIndex % 3 === 0)){
           // should clear all coins 
-          coin1 = "";
-          coin2 = "";
-          coin3 = "";  
+          coinDesign1 = "";
+          coinDesign2 = "";
+          coinDesign3 = "";  
         }
-        if (!coin1){
-          coin1 = data[i].coinname;
+        //make sure the coin variable is empty and the coin design names are different from one another
+        if (!coinDesign1){
+          coinDesign1 = allCoinsData[coinEntryIndex].coinname;
         }
-        else if (!coin2 && (coin2 != coin1)) {
-          coin2 = data[i].coinname;
+        else if (!coinDesign2 && (coinDesign2 != coinDesign1)) {
+          coinDesign2 = allCoinsData[coinEntryIndex].coinname;
         }
-        else if (!coin3 && (coin3 != coin2) && (coin3 != coin1)) {
-          coin3 = data[i].coinname;
+        else if (!coinDesign3 && (coinDesign3 != coinDesign2) && (coinDesign3 != coinDesign1)) {
+          coinDesign3 = allCoinsData[coinEntryIndex].coinname;
         }    
-        const name = data[i].machinename;
+        const currentMachineName = allCoinsData[coinEntryIndex].machinename;
         //no idea what line below does... 
         // document.getElementById("mytext").innerHTML = test;//Now you get the js variable inside your form element
 
-        const contentString2 = '<div id="content">' +
+        const contentStringInfoWindow = '<div id="content">' +
           '<div id="siteNotice">' +
           '</div>' +
-          '<h1 id="firstHeading" class="firstHeading">' + name + '</h1>' +
+          '<h1 id="firstHeading" class="firstHeading">' + currentMachineName + '</h1>' +
           '<div id="bodyContent">' +
-          '<p>' + coin1 + '<br>' + coin2 + '<br>' + coin3 +
+          '<p>' + coinDesign1 + '<br>' + coinDesign2 + '<br>' + coinDesign3 +
           '</p>' +
           '</div>' +
           '</div>';
-        console.log("we are on element : " + i + " with " + name);
         const infowindow = new google.maps.InfoWindow({
-          content: contentString2,
+          content: contentStringInfoWindow,
           maxWidth: 200
         });
 
-        marker2.addListener('click', () => {
-          infowindow.open(map, marker2);
+        currentMarker.addListener('click', () => {
+          infowindow.open(map, currentMarker);
         });
     }
   }
