@@ -1,18 +1,24 @@
 As a pressed coin collector for 10+ years and a lifetime Disney fan, I dislike how there is no efficient and official way to keep trach of my coins through the official Disneyland app, or by printing a paper and manually checking them off. 
 
 <b> What needs to be done: </b>
-~~ * Need to implement check boxes so that users can check off which coins they collected ~~
+* Need to implement check boxes so that users can check off which coins they collected
+    - DONE! 
 * DOCUMENTATION!! and cleaning up the code 
     - TO-DO: Lots of refactoring and creating a class for coins as well as functions required for the project
 * Allow users to register and save their progress 
-* Add all coin locations for the Disney parks in Anaheim, California and Orlando, Florida
-
-
+    - users can register
+    - users CANNOT save their progress yet
+* Add all coin locations for the Disney parks in Anaheim, California (2019 collection)
+    - do far in the future: add coins for Orlando, Florida
 
 <b>Please reach out to me if you are interested in seeing the presentation I created for this project!</b>
 
 Check out a sneak peek of the map demo: 
 <img src = "readmeimages/mapdemo.png">
+
+
+Personalized user's view:
+<img src = "readmeimages/individual.PNG">
 
 ----------------------------------
 I am revisting this project in 2020 and making major changes to the project to learn more about creating new feature and scaling up the project. It's been fun! Here are some resources and things I learned and wanted to take note of. 
