@@ -3,6 +3,7 @@ As a pressed coin collector for 10+ years and a lifetime Disney fan, I dislike h
 <b> What needs to be done: </b>
 ~~ * Need to implement check boxes so that users can check off which coins they collected ~~
 * DOCUMENTATION!! and cleaning up the code 
+    - TO-DO: Lots of refactoring and creating a class for coins as well as functions required for the project
 * Allow users to register and save their progress 
 * Add all coin locations for the Disney parks in Anaheim, California and Orlando, Florida
 

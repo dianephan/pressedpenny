@@ -1,0 +1,16 @@
+2020-05-15 15:20:44.189 PDT [1654] LOG:  starting PostgreSQL 12.2 on x86_64-pc-linux-gnu, compiled by gcc-5 (Ubuntu 5.4.0-6ubuntu1~16.04.12) 5.4.0 20160609, 64-bit
+2020-05-15 15:20:44.193 PDT [1654] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2020-05-15 15:20:44.216 PDT [1654] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2020-05-15 15:20:44.814 PDT [1655] LOG:  database system was interrupted; last known up at 2020-05-15 00:34:45 PDT
+2020-05-15 15:20:44.820 PDT [1655] WARNING:  could not flush dirty data: Function not implemented
+2020-05-15 15:20:54.610 PDT [1655] LOG:  database system was not properly shut down; automatic recovery in progress
+2020-05-15 15:20:54.618 PDT [1655] LOG:  redo starts at 0/1820908
+2020-05-15 15:20:54.618 PDT [1655] LOG:  invalid record length at 0/18209F0: wanted 24, got 0
+2020-05-15 15:20:54.619 PDT [1655] LOG:  redo done at 0/18209B8
+2020-05-15 15:20:54.775 PDT [1654] LOG:  database system is ready to accept connections
+2020-05-15 17:12:00.774 PDT [1654] LOG:  received fast shutdown request
+2020-05-15 17:12:00.783 PDT [1654] LOG:  aborting any active transactions
+2020-05-15 17:12:00.783 PDT [1688] FATAL:  terminating connection due to administrator command
+2020-05-15 17:12:00.791 PDT [1654] LOG:  background worker "logical replication launcher" (PID 1661) exited with exit code 1
+2020-05-15 17:12:00.792 PDT [1656] LOG:  shutting down
+2020-05-15 17:12:00.942 PDT [1654] LOG:  database system is shut down

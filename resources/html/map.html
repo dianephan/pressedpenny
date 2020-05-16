@@ -17,7 +17,6 @@
   </head>
   <body>
     <h3>Disney Coin Map</h3>
-    <!--The div element for the map -->
     <div id="map"></div>
     <script>
       
@@ -38,25 +37,23 @@
       var disneylandCoordinates = { lat: 33.812, lng: -117.918 };
       var hyperSpaceMountainExample = { lat: 33.811, lng: -117.918 };
 
-      // The map, centered at dland
+      // The map view is centered at disneyland 
       var map = new google.maps.Map(document.getElementById('map'), {
         zoom: 17, center: disneylandCoordinates});
       var coinDesign1 = "";
       var coinDesign2 = "";
-      var coin3 = "";     
+      var coinDesign3 = "";     
 
-      //i  is the machine n ame --> change the var name to machcine_idi
-      //EXPLAIN: what this for loop is doing (convince what its looking)
+      //for loop creates a marker based off the results from allCoinsData. every 3 coinEntryIndex represents 1 machine and therefore makes up 1 marker on the Google Map  
       for (coinEntryIndex in allCoinsData) {
-        const currentMarkerCoordinates = { lat: parseFloat(allCoinsData[coinEntryIndex].col_n), lng: parseFloat(allCoinsData[coinEntryIndex].col_w) };
-        // console.log(currentMarker);
+        const currentMarkerCoordinates = { lat: parseFloat(allCoinsData[coinEntryIndex].latitude_value), lng: parseFloat(allCoinsData[coinEntryIndex].longitude_value) };
         const currentMarker = new google.maps.Marker({ position: currentMarkerCoordinates, map: map });
-        //REFACTOR: can createa  coin class instead
+        //REFACTOR: can create a  coin class instead
 
         //the machine name is the same for every three coins so create a new string with that information
         //after working with the three coins/one machine, clear the variables 
         if (coinEntryIndex && (coinEntryIndex % 3 === 0)){
-          // should clear all coins 
+          // clear all coins for the next 3 coins in the new machine 
           coinDesign1 = "";
           coinDesign2 = "";
           coinDesign3 = "";  
@@ -72,7 +69,7 @@
           coinDesign3 = allCoinsData[coinEntryIndex].coinname;
         }    
         const currentMachineName = allCoinsData[coinEntryIndex].machinename;
-        //no idea what line below does... 
+        // might be important later on 
         // document.getElementById("mytext").innerHTML = test;//Now you get the js variable inside your form element
 
         const contentStringInfoWindow = '<div id="content">' +
@@ -94,7 +91,6 @@
         });
     }
   }
-
   </script>
     <!--Load the API from the specified URL
     * The async attribute allows the browser to render the page while the API loads

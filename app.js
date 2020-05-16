@@ -51,7 +51,7 @@ app.get('/admin',(req,res) => {
 });
 
 app.use('/logout', async (req,res) => {
-    console.log(objectUsersInfo.username + 'is ready to logout');    
+    console.log(objectUsersInfo.username + ' is ready to logout');    
     req.session.destroy((err) => {
         if(err) {
             return console.log(err);
@@ -116,7 +116,7 @@ app.post('/loginsession', async (req, res) => {
         const userIDQuery  = `SELECT * FROM users WHERE email = '${req.session.email}' AND  pass = '${req.session.pass}'`       //for the logged in user's info
         const userIDResult = await db.query(userIDQuery)
         const currentUserID = userIDResult.rows[0].id
-        const currentUsername = userIDResult.rows[0].userid
+        const currentUsername = userIDResult.rows[0].user_name
         req.session.currentID = currentUserID
         req.session.username = currentUsername
         objectUsersInfo = { 
@@ -138,7 +138,6 @@ app.post('/loginsession', async (req, res) => {
 app.get('/collect', (req, res) => {
     res.render('collectcoin.ejs')
 })
-
 app.post('/coininsert', async (req, res) => {
     const machine = req.body.machine
     const coin = req.body.coin
