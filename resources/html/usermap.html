@@ -1,4 +1,4 @@
-<!-- users.js calls this homepage! 
+<!-- 
   - make get req in my own API
   - need to make HTTP call to my own server 
 -->
@@ -21,146 +21,140 @@
   </head>
   <body>
     <h3>Here is your checklist!</h3>
-    <!--The div element for the map -->
     <div id="map"></div>
     <script>
-      //the cookies are a global variable. they need to be parsed 
-      var decodedCookie = decodeURIComponent(document.cookie);
-      var cookiedata = decodedCookie.split(';');
+      //the cookies are a global variable. they need to be parsed into a JSON object
+      var decodedGlobalCookie = decodeURIComponent(document.cookie);
+      var cookiedata = decodedGlobalCookie.split(';');
       var parsedCookie = JSON.parse(cookiedata[2])
     
-      //parsing the cookie into a string. didnt have to pass in any variable bc its a global variable 
+      //take the global variable (document.cookie) and parse out the userData from login page
+      //returns string of the details of user that is logged in / set in cookie 
       function getUserData() {
-        var name = "userData=";
+        //"userData="" indicates the beginning of the string inside cookie
+        var userDataString = "userData=";
         var cookiedata = decodeURIComponent(document.cookie);
-        var ca = cookiedata.split(';');
-        for(var i = 0; i < ca.length; i++) {
-          var c = ca[i].trim();
-          if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
+        var cookieDataArray = cookiedata.split(';');
+        //iterate through array of cookie data to find the userData that is needed
+        for(var indexOfCookieArray = 0; indexOfCookieArray < cookieDataArray.length; indexOfCookieArray++) {
+          var cookieValue = cookieDataArray[indexOfCookieArray].trim();
+          if (cookieValue.indexOf(userDataString) == 0) {
+            //return only the necessary string from the entire cookie string if matches "userData="
+            return cookieValue.substring(userDataString.length, cookieValue.length);
           }
         }
         return "";
       }
 
       // fetch func = asynchronous so that all my data is retrieved and completed before initializing map
-    async function initData() {
-      const response = await fetch('http://localhost:3000/coins/all');
-      const json = response.json();
-      console.log(json);
-      return json;
-    }
-
-    //define function for the checkbox 
-    function myFunction() {
-      var checkBox = document.getElementById("myCheck");
-      // var text = document.getElementById("text");
-      if (checkBox.checked == true){
-        // text.style.display = "block";
-        console.log("you checked coin1")
+      async function initData() {
+        const allCoinsData = await fetch('http://localhost:3000/coins/all');
+        const allCoinsDataJSON = allCoinsData.json();
+        return allCoinsDataJSON;
       }
-      else {
-        text.style.display = "none";
+
+    //each machine accesses the following 3 functions for the respective coin
+    //when checkbox is clicked, console will take note of which coin was pressed on
+    //TO-DO: make calls to the user's DB so the box can remain checked
+    //TO-DO: make a coin class and have one function work for all coins instead of 3 (sorry I know it's bad to repeat but I haven't made it work for one function yet)
+    async function onClickCheckMarkCoinOne() {
+      var checkBox = document.getElementById("myCheck");
+      if (checkBox.checked == true){
+        console.log("you checked coin1")
+      } else {
         console.log("you unchecked coin1")
       }
     }
-    async function myFunctionTwo() {
+    async function onClickCheckMarkCoinTwo() {
       var checkBoxTwo = document.getElementById("myCheckTwo");
       if (checkBoxTwo.checked == true){
         console.log("you checked coin2")
       } else {
-        text.style.display = "none";
         console.log("you unchecked coin2")
       }
     }
-    async function myFunctionThree() {
+    async function onClickCheckMarkCoinThree() {
       var checkBoxThree = document.getElementById("myCheckThree");
       if (checkBoxThree.checked == true){
         console.log("you checked coin3")
       } else {
-        text.style.display = "none";
         console.log("you unchecked coin3")
       }
     }
 
     // getting data from my own API (initData()) to build map 
-    async function initMap(data) {
-      var loggedUserName = getUserData(); 
-      var parsedUserName = JSON.parse(loggedUserName); 
-      alert("you are logged in as " + parsedUserName.username);
+    async function initMap(allCoinsData) {
+      var loggedUserNameFromCookie = getUserData(); 
+      var parsedUserDataFromCookie = JSON.parse(loggedUserNameFromCookie); 
+      //leaving this alert here for testing purposes 
+      alert("you are logged in as " + parsedUserDataFromCookie.username);
+      var allCoinsData = await initData(allCoinsData);
 
-      var data = await initData(data);
-      console.log(data)
-      // console.log('the length of array is : ' + data.length);
+      var disneylandCoordinates = { lat: 33.812, lng: -117.918 };
+      var hyperSpaceMountainExample = { lat: 33.811, lng: -117.918 };
 
-      var dland = { lat: 33.812, lng: -117.918 };
-      var hypsmtn = { lat: 33.811, lng: -117.918 };
-
-      // The map, centered at dland
+      // The map, view is centered at disneyland 
       var map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 17, center: dland});
-      var k;
-      var coin1 = "";
-      var coin2 = "";
-      var coin3 = "";     
+        zoom: 17, center: disneylandCoordinates});
+      var coinDesign1 = "";
+      var coinDesign2 = "";
+      var coinDesign3 = "";       
 
-      for (i in data) {
-        const currentMarker = { lat: parseFloat(data[i].col_n), lng: parseFloat(data[i].col_w) };
-        // console.log(currentMarker);
-        const marker2 = new google.maps.Marker({ position: currentMarker, map: map });
+      for (coinEntryIndex in allCoinsData) {
+        const currentMarkerCoordinates = { lat: parseFloat(allCoinsData[coinEntryIndex].latitude_value), lng: parseFloat(allCoinsData[coinEntryIndex].longitude_value) };
+        const currentMarker = new google.maps.Marker({ position: currentMarkerCoordinates, map: map });
 
-        if (i && (i % 3 === 0)){
+        //the machine name is the same for every three coins so create a new string with that information
+        //after working with the three coins/one machine, clear the variables 
+        if (coinEntryIndex && (coinEntryIndex % 3 === 0)){
           // should clear all coins 
-          coin1 = "";
-          coin2 = "";
-          coin3 = "";  
+          coinDesign1 = "";
+          coinDesign2 = "";
+          coinDesign3 = "";  
         }
-        if (!coin1){
-          coin1 = data[i].coinname;
+        //make sure the coin variable is empty and the coin design names are different from one another
+        if (!coinDesign1){
+          coinDesign1 = allCoinsData[coinEntryIndex].coinname;
         }
-        else if (!coin2 && (coin2 != coin1)) {
-          coin2 = data[i].coinname;
+        else if (!coinDesign2 && (coinDesign2 != coinDesign1)) {
+          coinDesign2 = allCoinsData[coinEntryIndex].coinname;
         }
-        else if (!coin3 && (coin3 != coin2) && (coin3 != coin1)) {
-          coin3 = data[i].coinname;
+        else if (!coinDesign3 && (coinDesign3 != coinDesign2) && (coinDesign3 != coinDesign1)) {
+          coinDesign3 = allCoinsData[coinEntryIndex].coinname;
         }    
-        const name = data[i].machinename;
-        //no idea what line below does... 
-        // document.getElementById("mytext").innerHTML = test;//Now you get the js variable inside your form element
-
-        const contentString2 = '<div id="content">' +
+        const currentMachineName = allCoinsData[coinEntryIndex].machinename;        
+        
+        // designing the HTML portion to work with JS 
+        const contentStringInfoWindow = '<div id="content">' +
           '<div id="siteNotice">' +
           '</div>' +
-          '<h1 id="firstHeading" class="firstHeading">' + name + '</h1>' +
+          '<h1 id="firstHeading" class="firstHeading">' + currentMachineName + '</h1>' +
           '<div id="bodyContent">' +
-          '<p>' + coin1 + '</p>' +
-          '<input type="checkbox" id="myCheck"  onclick="myFunction()"> ' 
+          '<p>' + coinDesign1 + '</p>' +
+          '<input type="checkbox" id="myCheck"  onclick="onClickCheckMarkCoinOne()"> ' 
             + '<p id="text" style="display:none">CHECKED!</p>' 
             + '<br> <p>' 
-            + coin2 
-            + '</p> <input type="checkbox" id="myCheckTwo"  onclick="myFunctionTwo()"> '
+            + coinDesign2 
+            + '</p> <input type="checkbox" id="myCheckTwo"  onclick="onClickCheckMarkCoinTwo()"> '
             + '<p id="text" style="display:none">CHECKED!</p>'
             + '<br> <p>' 
-            + coin3 + '</p>' 
-            + '<input type="checkbox" id="myCheckThree"  onclick="myFunctionThree()"> ' 
+            + coinDesign3 + '</p>' 
+            + '<input type="checkbox" id="myCheckThree"  onclick="onClickCheckMarkCoinThree()"> ' 
             + '<p id="text" style="display:none">CHECKED!</p>' 
             + '<br>' 
             + '</div>' +
           '</div>';
         //code below will show up in the google maps info window 
         const infowindow = new google.maps.InfoWindow({
-          content: contentString2,
-          maxWidth: 300
+          content: contentStringInfoWindow,
+          maxWidth: 200
         });
 
-        marker2.addListener('click', () => {
-          infowindow.open(map, marker2);
+        currentMarker.addListener('click', () => {
+          infowindow.open(map, currentMarker);
         });
     }
   }
-
-  module.exports = router   //might not be necessary 
-
   </script>
     <!--Load the API from the specified URL
     * The async attribute allows the browser to render the page while the API loads

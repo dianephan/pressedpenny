@@ -18,16 +18,25 @@
 -- DROP TABLE IF EXISTS collections cascade;
 -- DROP TABLE IF EXISTS coins cascade;
 -- DROP TABLE IF EXISTS locations cascade;
+
+---- uncomment below if updating function names
+-- DROP FUNCTION insert_user(TEXT, TEXT, TEXT);
 -- DROP FUNCTION get_user_map_data(INT);
+-- DROP FUNCTION create_machine(TEXT);
+-- DROP FUNCTION insert_machine(INT, TEXT, TEXT, TEXT, DECIMAL, DECIMAL);
+-- DROP FUNCTION insert_coin_entry (INT, INT, INT);
+-- DROP FUNCTION delete_coin_entry (INT, INT, INT);
 
 CREATE TABLE users(
     id SERIAL,
-    userid TEXT,
+    user_name TEXT,
     email TEXT,
     pass TEXT,
     PRIMARY KEY (id) 
 );
 
+-- machine has its own table because two other tables depend on it 
+-- machine locations are the same but machines can have seasonal coin designs 
 CREATE TABLE machines(
     id SERIAL PRIMARY KEY,
     machinename TEXT
@@ -35,8 +44,8 @@ CREATE TABLE machines(
 
 CREATE TABLE locations(
     id SERIAL PRIMARY KEY,
-    col_n DECIMAL(7,3),  
-    col_w DECIMAL(7,3),  
+    latitude_value DECIMAL(7,3),        
+    longitude_value DECIMAL(7,3),
     fk_machine_id INT REFERENCES machines (id)  
 );
 
@@ -54,14 +63,15 @@ CREATE TABLE collections(
     fk_coins_id INT REFERENCES coins (id)
 );
 
+-- registration 
 CREATE OR REPLACE FUNCTION insert_user(username TEXT, mail TEXT, pw TEXT) RETURNS void AS
     $$
     BEGIN
-        INSERT INTO users (userid, email, pass) VALUES (username, mail, pw);
+        INSERT INTO users (user_name, email, pass) VALUES (username, mail, pw);
     END;
     $$ LANGUAGE PLPGSQL;
 
--- for every machine you add, you insert 3 coins as well 
+-- for every machine you add, you insert 3 coins at the same time 
 CREATE OR REPLACE FUNCTION create_machine(machine TEXT) RETURNS void AS
     $$
     BEGIN
@@ -69,49 +79,52 @@ CREATE OR REPLACE FUNCTION create_machine(machine TEXT) RETURNS void AS
     END;
     $$ LANGUAGE PLPGSQL;
 
-CREATE OR REPLACE FUNCTION insert_machine(fk_machine INT, coin_one TEXT, coin_two TEXT, coin_three TEXT, n DECIMAL, w DECIMAL) RETURNS void AS
+-- for admin to create machines and markers on the map 
+CREATE OR REPLACE FUNCTION insert_machine(fk_machine INT, coin_one TEXT, coin_two TEXT, coin_three TEXT, latitude_input DECIMAL, longitude_input DECIMAL) RETURNS void AS
     $$
     BEGIN
         INSERT INTO coins (coinname, fk_machine_id) VALUES (coin_one, fk_machine);
         INSERT INTO coins (coinname, fk_machine_id) VALUES (coin_two, fk_machine);
         INSERT INTO coins (coinname, fk_machine_id) VALUES (coin_three, fk_machine);
-        INSERT INTO locations (col_n, col_w, fk_machine_id) VALUES (n, w, fk_machine);
+        INSERT INTO locations (latitude_value, longitude_value, fk_machine_id) VALUES (latitude_input, longitude_input, fk_machine);
     END;
     $$ LANGUAGE PLPGSQL;
 
-CREATE OR REPLACE FUNCTION insert_coin_entry (fk_user INT, fk_coins INT, input_year INT) RETURNS void AS
+-- for users to record the coin they collected. hasn't been accessible by user yet 
+CREATE OR REPLACE FUNCTION insert_coin_entry (fk_userid_input INT, fk_coins INT, input_year INT) RETURNS void AS
     $$
     BEGIN
-        INSERT INTO collections(fk_user_id, fk_coins_id, coin_year) VALUES (fk_user, fk_coins, input_year);
+        INSERT INTO collections(fk_user_id, fk_coins_id, coin_year) VALUES (fk_userid_input, fk_coins, input_year);
     END;
     $$ LANGUAGE PLPGSQL;
 
+-- for users to remove a coin out of their collection (ex/ if they accidentally submit the entry or lost a coin) - hasn't been accessible by user yet
 CREATE OR REPLACE FUNCTION delete_coin_entry (fk_user INT, fk_coins INT, input_year INT) RETURNS void AS
     $$
     BEGIN
-        DELETE FROM collections WHERE fk_user_id = fk_user AND fk_coins_id = fk_coins AND coin_year = input_year; 
+        DELETE FROM collections WHERE fk_user_id = fk_userid_input AND fk_coins_id = fk_coins AND coin_year = input_year; 
     END;
     $$ LANGUAGE PLPGSQL;
 
--- call to load a map for the specific user 
-CREATE OR REPLACE FUNCTION get_user_map_data (input_userid INT) 
+-- call to load all the coins that the user owns 
+CREATE OR REPLACE FUNCTION get_user_map_data (input_user_name INT) 
     RETURNS TABLE (
         fkid INT, 
         name TEXT,
         year INT,
         coinname TEXT,
         machinename TEXT, 
-        col_n DECIMAL,
-        col_w DECIMAL        
+        latitude_value DECIMAL,
+        longitude_value DECIMAL        
     )
     AS $$ 
     BEGIN 
         RETURN QUERY 
-            SELECT u.id, u.userid, col.coin_year, c.coinname, m.machinename, l.col_n, l.col_w
+            SELECT u.id, u.user_name, col.coin_year, c.coinname, m.machinename, l.latitude_value, l.longitude_value
             FROM (
-                SELECT id, userid
+                SELECT id, user_name
                 FROM users 
-                WHERE id = input_userid
+                WHERE id = input_user_name
             ) u
             LEFT JOIN collections col ON col.fk_user_id = u.id
             LEFT JOIN coins c ON c.id = col.fk_coins_id
@@ -122,9 +135,8 @@ CREATE OR REPLACE FUNCTION get_user_map_data (input_userid INT)
     LANGUAGE PLPGSQL;
 
 
--- --using "insert_user" function prevents u from having to type out all the params and values 
--- SELECT insert_user('diane', 'd@gmail.com', 'p0ma');
--- SELECT insert_user('chandler', 'c@gmail.com', 'lavitar');
+SELECT insert_user('diane', 'd@gmail.com', 'p0ma');
+SELECT insert_user('chandler', 'c@gmail.com', 'lavitar');
 
 SELECT create_machine('Penny Arcade #1');
 SELECT insert_machine(1, 'Peter Pan, Walts "Leave Today…"', 'Mickey, Walts "Do the Impossible" Castle', 'Walts "If you can dream it."', 33.811259, -117.919210);
