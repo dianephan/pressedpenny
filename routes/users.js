@@ -3,89 +3,140 @@ const db = require('../db')
 const router = new Router()
 const path = require('path');           //this helps the google maps api show up
 var session = require('express-session')
+const express = require('express');
 
 ///////////////////////////////////
+        // FROM APP.JS
+////////////////////////////////////
+var bodyParser = require('body-parser');
+const mountRoutes = require('./index');
 
-// router.use(session({
-//     // should secret be the user id? 
-//     secret: 'keyboard cat',  
-//     resave: false,
-//     saveUninitialized: true
-// }))
-   
-// router.use(function (req, res, next) {
-//     if (!req.session.views) {
-//         req.session.views = {}
-//     }
-//     // get the url pathname
-//     var pathname = parseurl(req).pathname
-//     // count the views
-//     req.session.views[pathname] = (req.session.views[pathname] || 0) + 1
-//     next()
-// })
+////////////for login session//////////
+const redis = require('redis');
+const redisStore = require('connect-redis')(session);
+const client  = redis.createClient();
+var parseurl = require('parseurl')
 
-// router.get('/foo', function (req, res, next) {
-//     res.send('you viewed this page ' + req.session.views['/foo'] + ' times')
-// })
+//////////url parsing//////////
+const http = require('http');
+const url = require('url');
+///////cookies for sessions////////
+var cookieParser = require('cookie-parser');
+//////////////////////////////
+
+//this part is necessary for posting the user's email and pw 
+// const app = express();
+router.use(bodyParser.json()); // support json encoded bodies
+router.use(bodyParser.urlencoded({ extended: false })); // support encoded bodies
+router.use(cookieParser());
+
+// mountRoutes(app)
+
+router.use(session({
+    secret: 'ssshhhhh',
+    // create new redis store.
+    store: new redisStore({ host: 'localhost', port: 6379, client: client,ttl : 260}),
+    saveUninitialized: false,
+    resave: true //originally F but unsure
+}));
 
 ///////////////////////////////////
-
-// router.get('/',(req,res) => {
-//     let sess = req.session;
-//     if(sess.email) {
-//         return res.redirect('/admin');
-//     }
-//     res.sendFile('index.html');
-// });
-
-
-
-
+        // FOR FRONTEND
 ////////////////////////////////////
 
+// router.use('/logout', async (req,res) => {
+//     console.log(objectUsersInfo.username + ' requested to logout');    
+//     req.session.destroy((err) => {
+//         if(err) {
+//             return console.log(err);
+//         }
+//         //it will clear the userData cookie 
+//         res.clearCookie('userData'); 
+//         res.send('user logout successful'); 
+//     });
+// });
+
+// // redirects user to HTML form to enter their information 
+// router.get('/registration', (req, res) => {
+//     res.sendFile(path.join(__dirname + '/resources/html/registration.html'));
+// })
+
+// router.post('/register', async (req, res) => {
+//     const userid = req.body.userid
+//     const email = req.body.email
+//     const pass = req.body.password
+//     const myQuery = `SELECT insert_user('${userid}', '${email}', '${pass}')`
+//     await db.query(myQuery)
+//     console.log("[INFO] : ", userid, "has been sucessfully registered")
+//     res.send("Success boyo")
+// })
+
+//JSON object to be added to cookie (GLOBAL VARIABLE) referenced throughout project  
+let objectUsersInfo = {}
+
+//first you /setUser via res.cookie, then you redirect the user to their personalized page 
+router.get('/welcome', (req, res)=>{ 
+    res.cookie("userData", JSON.stringify(objectUsersInfo)); 
+    console.log("[INFO] : setting user ", objectUsersInfo, " = usersInfo")
+    res.sendFile(path.join(__dirname, '../resources/html', 'usermap.html'));
+    // res.end('<a href='+'/users/' + objectUsersInfo.id +'>View your collection</a>');       //to add a button later on?    
+}); 
+
+//Iterate users data from cookie (shows username, email, pw)  
+router.get(
+    '/getuser', (req, res)=>{ 
+    res.send(req.cookies); 
+}); 
+
+router.get('/login', async (req, res) => {
+    res.render('logindex.ejs')
+})
+
+////// USER LOGS IN TO SEE WHAT THEY HAVE AND WHAT THEY DONT HAVE \\\\\\
+router.post('/loginsession', async (req, res) => {
+    var o = {} //empty object
+    key = 'loggeduser'; 
+    o[key] = []; //empty array to push values into 
+    req.session.email = req.body.email
+    req.session.pass = req.body.password
+    const queryUserData = `SELECT EXISTS (SELECT 1 FROM users WHERE email = '${req.session.email}' AND  pass = '${req.session.pass}')`
+    const userExistenceInfo = await db.query(queryUserData)
+
+    // parse user's information if they exist in the db and add info to session cookies 
+    if (userExistenceInfo.rows[0].exists) {
+        var htmlMessage = 'Hello:' + req.session.email + 'you successfully logged in';
+        console.log("[INFO] : post received: %s %s", req.session.email, req.session.pass);
+        // res.send(htmlMessage)
+        const userIDQuery  = `SELECT * FROM users WHERE email = '${req.session.email}' AND  pass = '${req.session.pass}'`       //for the logged in user's info
+        const userIDResult = await db.query(userIDQuery)
+        const currentUserID = userIDResult.rows[0].id
+        const currentUsername = userIDResult.rows[0].user_name
+        req.session.currentID = currentUserID
+        req.session.username = currentUsername
+        objectUsersInfo = { 
+            username : req.session.username, 
+            id : req.session.currentID
+        };     
+        o[key].push(objectUsersInfo);
+        JSON.stringify(o);     
+        //now write all the user data into the global cookie (formerly /setUser instead of /welcome)
+        res.writeHead(301,{Location: 'http://localhost:3000/users/welcome'});   
+        res.end();     
+    } else {
+        res.send("Login not successful")
+    }
+})
 
 
-
+///////////////////////////////////
+        // FOR DATABASE
+////////////////////////////////////
 
 //delete once project is done lool 
 router.get('/all', async (req, res) => {
     const { rows } = await db.query("SELECT * FROM users; ")
     res.send(rows)
 })
-
-// // /user/register <-- will only use this call in the frontend. User won't type it in
-// router.post('/register', async (req, res) => {     // use post bc sensitive data  
-//     const userid = req.body.userid
-//     const email = req.body.email
-//     const pass = req.body.password
-//     const myQuery = `SELECT insert_user('${userid}', '${email}', '${pass}')`
-//     await db.query(myQuery)
-//     res.send("Success boyo")
-// })
-
-
-
-// app.post('/login',(req,res) => {
-//     req.session.email = req.body.email;
-//     res.end('done');
-// });
-
-
-
-// router.post('/login', async (req, res) => {
-//     const email = req.body.email
-//     const pass = req.body.password
-//     const myQuery = `SELECT EXISTS (SELECT 1 FROM users WHERE email = '${email}' AND  pass = '${pass}')`
-//     const result = await db.query(myQuery)
-//     console.log(result.rows[0].exists)
-//     if (result.rows[0].exists) {
-//         // res.send("Successful login.")
-//         res.sendFile(path.join(__dirname + '/../resources/html/map.html'));
-//     } else {
-//         res.send("not scucessful")
-//     }
-
-// })
 
 // this gets run after the user logins first 
 router.post('/collect', async (req, res) => {

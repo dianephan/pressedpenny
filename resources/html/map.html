@@ -71,7 +71,6 @@
         const currentMachineName = allCoinsData[coinEntryIndex].machinename;
         // might be important later on 
         // document.getElementById("mytext").innerHTML = test;//Now you get the js variable inside your form element
-
         const contentStringInfoWindow = '<div id="content">' +
           '<div id="siteNotice">' +
           '</div>' +
@@ -89,8 +88,8 @@
         currentMarker.addListener('click', () => {
           infowindow.open(map, currentMarker);
         });
+      }
     }
-  }
   </script>
     <!--Load the API from the specified URL
     * The async attribute allows the browser to render the page while the API loads
