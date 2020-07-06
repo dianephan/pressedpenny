@@ -136,7 +136,6 @@ CREATE OR REPLACE FUNCTION get_user_map_data (input_user_name INT)
 
 
 SELECT insert_user('diane', 'd@gmail.com', 'p0ma');
-SELECT insert_user('chandler', 'c@gmail.com', 'lavitar');
 
 SELECT create_machine('Penny Arcade #1');
 SELECT insert_machine(1, 'Peter Pan, Walts "Leave Today…"', 'Mickey, Walts "Do the Impossible" Castle', 'Walts "If you can dream it."', 33.811259, -117.919210);

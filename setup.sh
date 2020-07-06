@@ -1,3 +1,4 @@
+#to set up proj on new devices 
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.0/install.sh | bash
 source ~/.zshrc
 wget http://download.redis.io/redis-stable.tar.gz

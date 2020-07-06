@@ -3,8 +3,8 @@ const {
   Client
 } = require('pg')
 
-// this const pool is required to access database on heroku
-// also had to delete .env file (local) because it might have overwritten heroku's .env file
+//// this const pool is required to access database on heroku
+//// also had to delete .env file (local) because it might have overwritten heroku's .env file
 
 // const pool = new Pool({
 //   user: 'njolazjolmpfjq',
@@ -43,10 +43,25 @@ const client = new Client({
   // connectionString: 'var/run/postgresql',
 });
 
+
 client.connect()
 
+//supposed to log our queries when executed 
 module.exports = {
   query: (text, params, callback) => {
-    return pool.query(text, params, callback)
+    const start = Date.now()
+    return pool.query(text, params, callback, (err, res) => {
+      const duration = Date.now() - start
+      console.log('executed query', { text, duration, rows: res.rowCount })
+      callback(err, res)
+    })
   }
 }
+
+
+// module.exports = {
+//   query: (text, params, callback) => {
+//     return pool.query(text, params, callback)
+//   }
+// }
+

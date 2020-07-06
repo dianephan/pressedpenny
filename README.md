@@ -45,7 +45,7 @@ Steps for reinstallation / running on a new machine:
 
 ----------------------------------
 References:
-<b>Understanding Google  Maps API</b>
+<b>Understanding Google Maps API</b>
 <b> LINKS USED: </b> 
 * https://developers.google.com/maps/documentation/javascript/adding-a-google-map
 
@@ -65,6 +65,11 @@ because i had no idea what to do 90% of the time
 <b> Understanding Cookies: </b>
 <b> LINKS USED: </b>
 * https://www.w3schools.com/js/js_cookies.asp
+
+<b> Resources for refactoring </b>
+<b> LINKS USED: </b>
+* https://node-postgres.com/guides/project-structure
+* https://blog.logrocket.com/setting-up-a-restful-api-with-node-js-and-postgresql-d96d6fc892d8/
 
 <b>Other things I learned</b>
 * run ```ps aux | grep node``` to kill ports when the same port error comes up 
