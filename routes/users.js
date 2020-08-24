@@ -1,7 +1,7 @@
 const Router = require('express-promise-router')
 const db = require('../db')
 const router = new Router()
-const path = require('path');           //this helps the google maps api show up
+const path = require('path');                           //this helps the google maps api show up
 var session = require('express-session')
 const express = require('express');
 var bodyParser = require('body-parser');
@@ -54,18 +54,13 @@ router.post('/register', async (req, res) => {
     const userid = req.body.userid
     const email = req.body.email
     const pass = req.body.password
-    // make sure the email doesnt exist yet
     const queryUserData = `SELECT EXISTS (SELECT 1 FROM users WHERE email = '${req.session.email}')`
     const userExistenceInfo = await db.query(queryUserData)
-    // parse user's information if they exist in the db and add info to session cookies 
     if (userExistenceInfo.rows[0].exists === true) {
         res.send("Email already taken. Please try again.")
     } else {
-        // HASH PASSWORDS HERE 
         const saltRounds = 10;
-        // const yourPassword = pass;
         const hash = bcrypt.hashSync(pass, saltRounds);
-        // hash value = hashing algo of salt value + yourPassword 
         const myQuery = `SELECT insert_user('${userid}', '${email}', '${hash}')`
         await db.query(myQuery)
         console.log("[INFO] : ", userid, "has been sucessfully registered")
@@ -104,16 +99,15 @@ router.post('/loginsession', async (req, res) => {
 
     const queryUserData = `SELECT EXISTS (SELECT 1 FROM users WHERE email = '${req.session.email}')`
     const userExistenceInfo = await db.query(queryUserData)
-    // parse user's information if they exist in the db and add info to session cookies 
+    // if user email exist in the db then add info to session cookies 
     if (userExistenceInfo.rows[0].exists) {
         const queryUserHashData = `SELECT * FROM users WHERE email = '${req.session.email}'`
         const userHashInfo = await db.query(queryUserHashData)
         hash = userHashInfo.rows[0].hashed_pass
         // if userExistenceInfo == True, then compare the bcrypt stuff 
         if (bcrypt.compareSync(req.session.pass, hash)) {
-            console.log("[INFO] : the user logging in typed a pw that matches up with the hashed value")
-            var htmlMessage = 'Hello:' + req.session.email + 'you successfully logged in';
-            console.log("[INFO] : post received: %s %s", req.session.email, req.session.pass);
+            console.log("[INFO] : User typed a pw that matches up with the hashed value")
+            // var htmlMessage = 'Hello:' + req.session.email + 'you successfully logged in';
             // res.send(htmlMessage)
             const userIDQuery  = `SELECT * FROM users WHERE email = '${req.session.email}'`       //for the logged in user's info
             const userIDResult = await db.query(userIDQuery)
@@ -131,15 +125,13 @@ router.post('/loginsession', async (req, res) => {
             res.writeHead(301,{Location: 'http://localhost:3000/users/welcome'});   
             res.end();     
         } else {
-            console.log("[INFO] : bcrypt says false")
-            res.send("Login not successful. You entered the wrong password.")
+            console.log("[INFO] : bcrypt says false - the password entered is incorrect")
+            res.send("Login not successful. Wrong password.")
         }
     } else {
         res.send("Login not successful. User does not exist")
     }
 })
-
-
 
 //please ignonre /collect and /coininsert. it may or may not be used in the final project 
 router.get('/collect', (req, res) => {
