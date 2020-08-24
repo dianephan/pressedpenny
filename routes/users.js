@@ -6,6 +6,7 @@ var session = require('express-session')
 const express = require('express');
 var bodyParser = require('body-parser');
 const mountRoutes = require('./index');
+const bcrypt = require('bcrypt');
 
 //////////for login session//////////
 const redis = require('redis');
@@ -53,10 +54,23 @@ router.post('/register', async (req, res) => {
     const userid = req.body.userid
     const email = req.body.email
     const pass = req.body.password
-    const myQuery = `SELECT insert_user('${userid}', '${email}', '${pass}')`
-    await db.query(myQuery)
-    console.log("[INFO] : ", userid, "has been sucessfully registered")
-    res.send("Registered successfully!")
+    // make sure the email doesnt exist yet
+    const queryUserData = `SELECT EXISTS (SELECT 1 FROM users WHERE email = '${req.session.email}')`
+    const userExistenceInfo = await db.query(queryUserData)
+    // parse user's information if they exist in the db and add info to session cookies 
+    if (userExistenceInfo.rows[0].exists === true) {
+        res.send("Email already taken. Please try again.")
+    } else {
+        // HASH PASSWORDS HERE 
+        const saltRounds = 10;
+        // const yourPassword = pass;
+        const hash = bcrypt.hashSync(pass, saltRounds);
+        // hash value = hashing algo of salt value + yourPassword 
+        const myQuery = `SELECT insert_user('${userid}', '${email}', '${hash}')`
+        await db.query(myQuery)
+        console.log("[INFO] : ", userid, "has been sucessfully registered")
+        res.send("Registered successfully!")
+    }
 })
 
 //JSON object to be added to cookie (GLOBAL VARIABLE) referenced throughout project  
@@ -87,31 +101,41 @@ router.post('/loginsession', async (req, res) => {
     o[key] = []; //empty array to push values into 
     req.session.email = req.body.email
     req.session.pass = req.body.password
-    const queryUserData = `SELECT EXISTS (SELECT 1 FROM users WHERE email = '${req.session.email}' AND  pass = '${req.session.pass}')`
-    const userExistenceInfo = await db.query(queryUserData)
 
+    const queryUserData = `SELECT EXISTS (SELECT 1 FROM users WHERE email = '${req.session.email}')`
+    const userExistenceInfo = await db.query(queryUserData)
     // parse user's information if they exist in the db and add info to session cookies 
     if (userExistenceInfo.rows[0].exists) {
-        var htmlMessage = 'Hello:' + req.session.email + 'you successfully logged in';
-        console.log("[INFO] : post received: %s %s", req.session.email, req.session.pass);
-        // res.send(htmlMessage)
-        const userIDQuery  = `SELECT * FROM users WHERE email = '${req.session.email}' AND  pass = '${req.session.pass}'`       //for the logged in user's info
-        const userIDResult = await db.query(userIDQuery)
-        const currentUserID = userIDResult.rows[0].id
-        const currentUsername = userIDResult.rows[0].user_name
-        req.session.currentID = currentUserID
-        req.session.username = currentUsername
-        objectUsersInfo = { 
-            username : req.session.username, 
-            id : req.session.currentID
-        };     
-        o[key].push(objectUsersInfo);
-        JSON.stringify(o);     
-        //now write all the user data into the global cookie (formerly /setUser instead of /welcome)
-        res.writeHead(301,{Location: 'http://localhost:3000/users/welcome'});   
-        res.end();     
+        const queryUserHashData = `SELECT * FROM users WHERE email = '${req.session.email}'`
+        const userHashInfo = await db.query(queryUserHashData)
+        hash = userHashInfo.rows[0].hashed_pass
+        // if userExistenceInfo == True, then compare the bcrypt stuff 
+        if (bcrypt.compareSync(req.session.pass, hash)) {
+            console.log("[INFO] : the user logging in typed a pw that matches up with the hashed value")
+            var htmlMessage = 'Hello:' + req.session.email + 'you successfully logged in';
+            console.log("[INFO] : post received: %s %s", req.session.email, req.session.pass);
+            // res.send(htmlMessage)
+            const userIDQuery  = `SELECT * FROM users WHERE email = '${req.session.email}'`       //for the logged in user's info
+            const userIDResult = await db.query(userIDQuery)
+            const currentUserID = userIDResult.rows[0].id
+            const currentUsername = userIDResult.rows[0].user_name
+            req.session.currentID = currentUserID
+            req.session.username = currentUsername
+            objectUsersInfo = { 
+                username : req.session.username, 
+                id : req.session.currentID
+            };     
+            o[key].push(objectUsersInfo);
+            JSON.stringify(o);     
+            //now write all the user data into the global cookie (formerly /setUser instead of /welcome)
+            res.writeHead(301,{Location: 'http://localhost:3000/users/welcome'});   
+            res.end();     
+        } else {
+            console.log("[INFO] : bcrypt says false")
+            res.send("Login not successful. You entered the wrong password.")
+        }
     } else {
-        res.send("Login not successful")
+        res.send("Login not successful. User does not exist")
     }
 })
 
@@ -147,7 +171,7 @@ router.post('/coininsert', async (req, res) => {
 })
 
 ///////////////////////////////////
-        // FOR DATABASE
+        // VIEW DATABASE
 ///////////////////////////////////
 
 //delete once project is done lool 

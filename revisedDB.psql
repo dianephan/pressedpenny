@@ -31,7 +31,7 @@ CREATE TABLE users(
     id SERIAL,
     user_name TEXT,
     email TEXT,
-    pass TEXT,
+    hashed_pass TEXT,
     PRIMARY KEY (id) 
 );
 
@@ -64,10 +64,10 @@ CREATE TABLE collections(
 );
 
 -- registration 
-CREATE OR REPLACE FUNCTION insert_user(username TEXT, mail TEXT, pw TEXT) RETURNS void AS
+CREATE OR REPLACE FUNCTION insert_user(username TEXT, mail TEXT, hashed_pw TEXT) RETURNS void AS
     $$
     BEGIN
-        INSERT INTO users (user_name, email, pass) VALUES (username, mail, pw);
+        INSERT INTO users (user_name, email, hashed_pass) VALUES (username, mail, hashed_pw);
     END;
     $$ LANGUAGE PLPGSQL;
 
@@ -135,7 +135,6 @@ CREATE OR REPLACE FUNCTION get_user_map_data (input_user_name INT)
     LANGUAGE PLPGSQL;
 
 
-SELECT insert_user('diane', 'd@gmail.com', 'p0ma');
 
 SELECT create_machine('Penny Arcade #1');
 SELECT insert_machine(1, 'Peter Pan, Walts "Leave Today…"', 'Mickey, Walts "Do the Impossible" Castle', 'Walts "If you can dream it."', 33.811259, -117.919210);

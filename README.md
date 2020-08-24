@@ -71,6 +71,13 @@ because i had no idea what to do 90% of the time
 * https://node-postgres.com/guides/project-structure
 * https://blog.logrocket.com/setting-up-a-restful-api-with-node-js-and-postgresql-d96d6fc892d8/
 
+<b> Security stuff: </b>
+<b> LINKS USED: </b>
+* Bcrypt https://www.npmjs.com/package/bcrypt
+
+
+
+
 <b>Other things I learned</b>
 * run ```ps aux | grep node``` to kill ports when the same port error comes up 
 * working on a new branch
