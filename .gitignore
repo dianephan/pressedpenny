@@ -6,3 +6,4 @@ logfile
 redis-stable.tar.gz
 tester.psql
 .DS_Store
+config.js
