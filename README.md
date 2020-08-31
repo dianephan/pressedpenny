@@ -55,12 +55,13 @@ because i had no idea what to do 90% of the time
 
 * type "sudo -iu postgres" to change user in unix (ex/ diane@diane --> postgres@diane)
 --if no db exist, create "pennydb" to run this file 
+* Use PL/pgSQL functions for building and executing dynamically. https://stackoverflow.com/questions/24755468/difference-between-language-sql-and-language-plpgsql-in-postgresql-functions/24771561#24771561
+
 
 <b> LINKS USED: </b> 
 * https://stackoverflow.com/questions/27777076/accidently-removed-postgres-default-superuser-privileges-can-i-get-it-back/27778321
 * https://blog.logrocket.com/setting-up-a-restful-api-with-node-js-and-postgresql-d96d6fc892d8/
 * To understand relational databases: https://launchschool.com/books/sql_first_edition/read/multi_tables
-
 
 <b> Understanding Cookies: </b>
 <b> LINKS USED: </b>
@@ -75,9 +76,6 @@ because i had no idea what to do 90% of the time
 <b> LINKS USED: </b>
 * Bcrypt https://www.npmjs.com/package/bcrypt
 
-
-
-
 <b>Other things I learned</b>
 * run ```ps aux | grep node``` to kill ports when the same port error comes up 
 * working on a new branch
@@ -87,3 +85,4 @@ because i had no idea what to do 90% of the time
         - git checkout BRANCH_NAME_HERE
         - git merge master
         - git push origin BRANCH_NAME_HERE
+* `git rm <FILE_NAME>` to remove file from git repo 
