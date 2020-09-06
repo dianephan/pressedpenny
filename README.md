@@ -48,6 +48,7 @@ References:
 <b>Understanding Google Maps API</b>
 <b> LINKS USED: </b> 
 * https://developers.google.com/maps/documentation/javascript/adding-a-google-map
+* to pass in variables for `usermap.html` must use `onclick="onClickCheckMarkCoinOne(\'' + coinDesign1 + '\'` because `coinDesign1` is a javascript variable that will be evaluated in this string. this line is passing in the evaluated variables to the function `onClickCheckMarkCoinOne('mickey mouse', 2). thus, if the single quotes are not there, this JS function will not work properly 
 
 <b>Understanding psql</b>
 <br>
