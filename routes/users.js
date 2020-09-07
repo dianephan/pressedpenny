@@ -74,7 +74,7 @@ let objectUsersInfo = {}
 //first you /setUser via res.cookie, then you redirect the user to their personalized page 
 router.get('/welcome', (req, res)=>{ 
     res.cookie("userData", JSON.stringify(objectUsersInfo)); 
-    console.log("[INFO] : setting user ", objectUsersInfo, " = usersInfo")
+    console.log("[INFO] : setting user ", objectUsersInfo, " = objectUsersInfo")
     res.sendFile(path.join(__dirname, '../resources/html', 'usermap.html'));
     // res.end('<a href='+'/users/' + objectUsersInfo.id +'>View your collection</a>');       //to add a button later on?    
 }); 
@@ -133,33 +133,13 @@ router.post('/loginsession', async (req, res) => {
     }
 })
 
-//please ignonre /collect and /coininsert. it may or may not be used in the final project 
-router.get('/collect', (req, res) => {
-    res.sendFile(path.join(__dirname, '../resources/html', 'collectcoin.html'));
-})
-
-router.post('/coininsert', async (req, res) => {
-    const machine = req.body.machine
-    const coin = req.body.coin
-    const email = req.body.email
-
-    const idQuery  = `SELECT * FROM users WHERE email = '${email}'`       //for the logged in user's info
-    const idResult = await db.query(idQuery)
-    const currentID = idResult.rows[0].id
-
-    const machineQuery = `SELECT * FROM coins LEFT JOIN machines ON machines.id = coins.fk_machine_id LEFT JOIN locations ON locations.fk_machine_id = machines.id WHERE machinename = '${machine}'`
-    const machineResult = await db.query(machineQuery)
-    const machineID = machineResult.rows[0].fk_machine_id
-    console.log("[INFO] : ", machineID, "is the machineid")
-    const coinQuery = `SELECT * FROM coins WHERE fk_machine_id = '${machineID}' AND coinname = '${coin}'`
-    const coinResult = await db.query(coinQuery)
-    const coinID = coinResult.rows[0].id
-    console.log("[INFO] : " , coinID, "is the coinid for ", coin)
-
-    // const myQuery = `SELECT insert_coin_entry('${userid}', '${email}', '${pass}');`
-    //// (fk_user INT, fk_coins INT, input_year INT) 
-    var htmlData = 'Hello:' + email + ' u want to insert' + coin + 'to' + machine;
-    res.send(htmlData)
+router.get('/collect/:userid/:coinid', async (req, res) => {
+    const userid = req.params.userid;
+    const coinid = req.params.coinid;
+    const currentYear = 2019 
+    const myQuery = `SELECT insert_coin_entry('${userid}', '${coinid}', '${currentYear}')`
+    const { rows } = await db.query(myQuery)
+    console.log("[INFO] : coin has been inserted into user")
 })
 
 ///////////////////////////////////
